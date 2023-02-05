@@ -67,15 +67,15 @@ With these and other functionalities, the web portal for a fantasy soccer game w
 
 Login Page is displayed when the user first visits the website. The user can enter his login credentials and login to the website.
 
-![Login page](UImockup/LoginPage.png "Login Page.")
+![Login page](UIMockup/LoginPage.png "Login Page.")
 
 Once the user enters his login credentials and is authenticated, the landing page is displayed. The user can then search for players  in the search bar. 
 
-![Landing page after login](UImockup/LandingPage.png "Landing Page.")
+![Landing page after login](UIMockup/LandingPage.png "Landing Page.")
 
 The Admin portal is displayed when the user logs in as an admin. The admin can add new users, delete users, update user details, view all users, view all teams and view all players.
 
-![Admin portal](UImockup/AdminPortal.png "Admin Portal.")
+![Admin portal](UIMockup/AdminPortal.png "Admin Portal.")
 ## Work Distribution
 
 - All team members will equally contribute to DB UML diagrams and design.
