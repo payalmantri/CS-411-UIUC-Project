@@ -1,4 +1,4 @@
-<h1 align="center">Fantasy Football </h1>
+<h1 align="center">PlyRank - Fantasy Soccer </h1>
 
 ## Table of contents
 
@@ -12,7 +12,7 @@
 
 
 ## Project Summary
-A web portal for a fantasy football game is a platform that allows users to create their own virtual football teams using real-life players and compete against other users' teams . As a part of a database course, the project involves designing a database to store information about users, teams, players, and games. Users can get involved by forming the best teams utilizing player statistics from the past and comparing their own team with the teams of other users. Users interact with our website by logging in to their account, adding and removing players from their team, and viewing individual player statistics.
+A web portal for a fantasy soccer game is a platform that allows users to create their own virtual soccer teams using real-life players and compete against other users' teams . As a part of a database course, the project involves designing a database to store information about users, teams, players, and games. Users can get involved by forming the best teams utilizing player statistics from the past and comparing their own team with the teams of other users. Users interact with our website by logging in to their account, adding and removing players from their team, and viewing individual player statistics.
 
 
 ## Description
@@ -26,7 +26,7 @@ The backend of the portal will be a database of players, which will include thei
 
 ## Usefulness
 
-This project will be useful for soccer fans who are interested in forming their own virtual football teams and competing against others. Users will be able to demonstrate their knowledge of soccer players and tactics, while staying up-to-date with the most recent player statistics. Our website provides search functionality for players based on their statistics including name, position, rating, base price, etc. and aggregation functionality for the formation of teams. 
+This project will be useful for soccer fans who are interested in forming their own virtual soccer teams and competing against others. Users will be able to demonstrate their knowledge of soccer players and tactics, while staying up-to-date with the most recent player statistics. Our website provides search functionality for players based on their statistics including name, position, rating, base price, etc. and aggregation functionality for the formation of teams. 
 
 Many fantasy leagues for sports exist including Fantasy Premier League and ESPN Fantasy Soccer, but we are implementing a version of fantasy soccer where there is no preseason draft and all players are available to each user. Instead, users will be working with a set budget that limits the quality of the players that can be put on a single team.
 
@@ -54,14 +54,14 @@ The data comes from Transfermarkt, which is one of the largest sports websites i
 
 
 ## Functionality Description
-The web portal for a fantasy football game will offer a wide range of functionalities to its users.
+The web portal for a fantasy soccer game will offer a wide range of functionalities to its users.
 
 Firstly, the login screen is displayed and the user is prompted to enter his/her login credentials. 
 The admin can add new users to the database. The admin can also delete users from the database. The admin can also update the user details in the database. The admin can also view the list of users in the database. Admin can also view all the teams' details in the database and also view all the players' details in the database. Admin is able to make changes to the current player and team database for updating and maintaining the information provided on the webpage. The admin can choose to archive certain players to make them “inactive”, which is similar to deletion but the player’s data will be kept for observation only.
 
 The general user will see the list of players in his current team as the landing page. He can search for players based on different parameters like name, position, rating , base price etc. The user can add(insert) players to his team, remove(delete) players from his team, update(update) the players in his team and view the players in his team. The user can also manage positions of players in their team to simulate different tactics that may be used in the field. 
 
-With these and other functionalities, the web portal for a fantasy football game will provide a comprehensive and engaging platform for users to experience the excitement of football and gaming
+With these and other functionalities, the web portal for a fantasy soccer game will provide a comprehensive and engaging platform for users to experience the excitement of soccer and gaming.
 
 ## UI Mockup
 

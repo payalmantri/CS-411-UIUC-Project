@@ -19,10 +19,10 @@
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-|  Title      |       ProjectTitle     |
+|  Title      |      PlyRank - Fantasy Soccer     |
 | System URL  |      link_to_system    |
 | Video Link  |      link_to_video     |
 
 ## Project Summary
 
-This is a summary of the project!
+A web portal for a fantasy soccer game is a platform that allows users to create their own virtual football teams using real-life players and compete against other users' teams . As a part of a database course, the project involves designing a database to store information about users, teams, players, and games. Users can get involved by forming the best teams utilizing player statistics from the past and comparing their own team with the teams of other users. Users interact with our website by logging in to their account, adding and removing players from their team, and viewing individual player statistics.
