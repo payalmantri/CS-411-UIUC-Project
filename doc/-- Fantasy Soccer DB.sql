@@ -85,18 +85,17 @@ Create table player_team
 );
 
 -- Create Table game
-Create table game
-(
-    id int not null,
-   home_club_id int not null,
-    away_club_id int not null,
-    home_club_score int not null,
-    away_club_score int not null,
-    tournament_id int not null,
-    date_played date not null,
-    primary key (id),
-    foreign key (home_club_id) references club(id),
-    foreign key (away_club_id) references club(id)
+CREATE TABLE Games (
+id INT NOT NULL,
+home_club_id INT NOT NULL,
+away_club_id INT NOT NULL,
+home_club_score INT NOT NULL,
+away_club_score INT NOT NULL,
+tournament_id VARCHAR(255) NOT NULL,
+date_played DATE,
+PRIMARY KEY (id),
+FOREIGN KEY (home_club_id) REFERENCES club(id) ON UPDATE CASCADE,
+FOREIGN KEY (away_club_id) REFERENCES club(id) ON UPDATE CASCADE
 );
 
 -- Create table for player stats in each game
