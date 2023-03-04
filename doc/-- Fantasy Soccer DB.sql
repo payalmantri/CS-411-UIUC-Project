@@ -49,11 +49,11 @@ Create table player
 -- create table tournament
 Create table tournament
 (
-    id int not null,
+    id varchar(255) not null,
     name varchar(255) not null,
-    start_date date not null,
-    venue varchar(255) not null,
+    country varchar(255),
     type varchar(255) not null,
+    sub_type varchar(255) not null,
     url varchar(2048) not null,
     primary key (id)
 );
