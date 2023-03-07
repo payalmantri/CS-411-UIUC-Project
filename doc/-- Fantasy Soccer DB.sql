@@ -13,11 +13,11 @@ Use fantasy_soccer_db;
 Create table user
 (
     id int not null,
-    name varchar(255) not null,
+    name varchar(255) ,
     email varchar(255) not null,
     password_hash varchar(255) not null,
     role enum('admin', 'user') not null,
-    funds_available int not null,
+    funds_available int ,
     primary key (id)
 );
 
@@ -25,8 +25,8 @@ Create table user
 Create table club
 (
     id int not null,
-    name varchar(255) not null,
-    url varchar(2048) not null,
+    name varchar(255),
+    url varchar(2048),
     primary key (id)
 );
 
@@ -35,16 +35,19 @@ Create table player
 (
     id int not null,
     name varchar(255) not null,
-    position varchar(255) not null,
-    club_id int not null,
-    country_of_citizenship varchar(255) not null,
-    sub_position varchar(255) not null,
-    date_of_birth date not null,
-    current_market_value int not null,
-    image_url varchar(2048) not null,
+    club_id int ,
+    country_of_citizenship varchar(255) ,
+    date_of_birth date ,
+    position varchar(255) ,
+    sub_position varchar(255) ,
+    foot varchar(255) ,
+    current_market_value int ,
+    image_url varchar(2048),
+    transfermarkt_url varchar(2048),
     primary key (id),
     foreign key (club_id) references club(id)
 );
+
 
 -- create table tournament
 Create table tournament
@@ -65,8 +68,8 @@ Create table team
     id int not null,
     name varchar(255) not null,
     user_id int not null,
-    logo_url varchar(2048) not null,
-    created_at date not null,
+    logo_url varchar(2048),
+    created_at date ,
     primary key (id),
     foreign key (user_id) references user(id)
 );
@@ -78,6 +81,7 @@ Create table player_team
     player_id int not null,
     team_id int not null ,
     user_id int not null,
+    date_added date not null,
     primary key (player_id, team_id),
     foreign key (player_id) references player(id),
     foreign key (team_id) references team(id),
@@ -100,20 +104,41 @@ Create table game
 );
 
 -- Create table for player stats in each game
-
+-- club id of the player in the game
 Create table game_player_stats
 (
+    stat_id varchar(25) not null,
+     game_id int not null,
     player_id int not null,
-    game_id int not null,
-    goals int not null,
-    assists int not null,
-    yellow_cards int not null,
-    red_cards int not null,
+    player_club_id int , 
+     yellow_cards int ,
+      red_cards int ,
+    goals int ,
+    assists int ,
     primary key (player_id, game_id),
     foreign key (player_id) references player(id),
-    foreign key (game_id) references game(id)
+    foreign key (game_id) references Games(id),
+    foreign key (player_club_id) references club(id)
 );
 
 
 
+-- // modify tournament id to varchar(255) i
+ALTER TABLE tournament MODIFY COLUMN id varchar(255);
 
+
+
+Select * from game_player_stats where player_id = 1 and game_id = 1;
+
+Select sum(goals) as goals, sum(assists) as assists, sum(yellow_cards) as yellow_cards, sum(red_cards) as red_cards 
+from game_player_stats
+ where player_id = 1 and game_id in (select id from game where tournament_id = 1);
+
+--  Write query to fetch all stats of all players in a tournament
+Select player_id, name, sum(goals) as goals, sum(assists) as assists, sum(yellow_cards) as yellow_cards, sum(red_cards) as red_cards,
+sum(goals) + sum(assists) as total_points
+from game_player_stats
+inner join player on player.id = game_player_stats.player_id
+where game_id in (select id from game where tournament_id = 1)
+group by player_id
+order by total_points desc;
