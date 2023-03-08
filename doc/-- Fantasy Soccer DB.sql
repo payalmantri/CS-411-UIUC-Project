@@ -126,19 +126,48 @@ Create table game_player_stats
 -- // modify tournament id to varchar(255) i
 ALTER TABLE tournament MODIFY COLUMN id varchar(255);
 
-
-
-Select * from game_player_stats where player_id = 1 and game_id = 1;
-
-Select sum(goals) as goals, sum(assists) as assists, sum(yellow_cards) as yellow_cards, sum(red_cards) as red_cards 
-from game_player_stats
- where player_id = 1 and game_id in (select id from game where tournament_id = 1);
-
 --  Write query to fetch all stats of all players in a tournament
-Select player_id, name, sum(goals) as goals, sum(assists) as assists, sum(yellow_cards) as yellow_cards, sum(red_cards) as red_cards,
-sum(goals) + sum(assists) as total_points
+SELECT player_id,
+       name,
+       sum(goals) AS goals,
+       sum(assists) AS assists,
+       sum(yellow_cards) AS yellow_cards,
+       sum(red_cards) AS red_cards,
+       sum(goals) + sum(assists) AS total_points
+FROM game_player_stats
+INNER JOIN player ON player.id = game_player_stats.player_id
+WHERE game_id in
+    (SELECT id
+     FROM Games
+     WHERE tournament_id = (SELECT id FROM tournament WHERE name = 'LaLiga'))
+GROUP BY player_id
+ORDER BY total_points DESC
+LIMIT 15;
+
+
+-- Fetch lifetime stats of a player
+SELECT player_id,
+       name,
+       sum(goals) AS goals,
+       sum(assists) AS assists,
+       sum(yellow_cards) AS yellow_cards,
+       sum(red_cards) AS red_cards,
+       sum(goals) + sum(assists) AS total_points
+FROM game_player_stats
+INNER JOIN player ON player.id = game_player_stats.player_id
+WHERE player.name = 'Lionel Messi'
+GROUP BY player_id
+ORDER BY total_points DESC;
+
+-- Fetch top 15 players based on goals and assists for a club
+Select player_id, player.name,club.name, sum(goals) as goals, sum(assists) as assists
 from game_player_stats
-inner join player on player.id = game_player_stats.player_id
-where game_id in (select id from game where tournament_id = 1)
+        inner join player on player.id = game_player_stats.player_id
+        inner join club on club.id = player.club_id
+where club.name = 'Fc Barcelona'
 group by player_id
-order by total_points desc;
+order by goals desc, assists desc
+limit 15;
+
+-- Add index on club name 
+create index club_name_index on club(name);
