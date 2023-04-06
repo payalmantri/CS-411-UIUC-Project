@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
   
 const Home = () => {
   return (
@@ -10,6 +11,7 @@ const Home = () => {
         height: '100vh'
       }}
     >
+         <Navbar />
       <h1>Welcome to GeeksforGeeks</h1>
     </div>
   );
