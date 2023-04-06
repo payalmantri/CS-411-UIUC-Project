@@ -7,20 +7,21 @@ import About from './pages/about';
 import Events from './pages/events';
 import  Blogs from './pages/blogs';
 import Login from './Login';
-import {Register} from './Register';
+import Register from './Register';
+import { useState } from 'react';
 
 function App() {
+  const [currentForm, setCurrentForm] = useState('login');
   return (
     <div className="App">
     <Router>
- 
     <Routes>
     <Route path='/' exact element={<Login/>} />
          <Route path='/Home' exact element={<Home />} />
          <Route path='/about' element={<About />} />
          <Route path='/events' element={<Events />} />
-    
-       
+         <Route path='/Register' element={<Register />} />
+  
          <Route path='/blogs' element={<Blogs />} />
     </Routes>
     </Router>
