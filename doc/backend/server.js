@@ -47,6 +47,36 @@ console.log(sql);
   });
 });
 
+app.get('/lifetimestats/:id', function(req, res) {
+	var tournamentname = req.params.id;
+
+	var sql = `SELECT player_id,
+		       name,
+		       sum(goals) AS goals,
+		       sum(assists) AS assists,
+		       sum(yellow_cards) AS yellow_cards,
+		       sum(red_cards) AS red_cards,
+		       sum(goals) + sum(assists) AS total_points
+		FROM game_player_stats
+		INNER JOIN player ON player.id = game_player_stats.player_id
+		WHERE game_id in
+		    (SELECT id
+		     FROM Games
+		     WHERE tournament_id = (SELECT id FROM tournament WHERE name = '${tournamentname}'))
+		GROUP BY player_id
+		ORDER BY total_points DESC
+		LIMIT 15`;
+	console.log(sql);
+  connection.query(sql, function(err, result) {
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.json(result)
+  });
+});
+	
+
 
 app.listen(80, function () {
     console.log('Node app is running on port 80');
