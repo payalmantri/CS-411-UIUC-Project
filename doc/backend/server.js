@@ -34,7 +34,7 @@ app.get('/', function(req, res) {
         res.send({'message': 'Hello'});
 });
 
-/* GET username/password body */
+/* Validate username and password */
 app.post('/login', function(req, res) {
 	console.log(req.body);
 	var email = req.body.email;
@@ -101,8 +101,46 @@ app.get('/lifetimestats/:id', function(req, res) {
     res.json(result)
   });
 });
-	
 
+/* Get user team details */
+app.get('/teams', function(req, res) {
+	console.log(req.query);
+	var userid = req.query.userId;
+	console.log(userid)
+	var sql = `select T.id, T.name, T.logo_url, P.name as player_name
+		from team T natural join player_team PT natural join player P
+		where T.user_id = ${userid}`;
+	console.log(sql);	
+	connection.query(sql, function(err, result) {
+    		console.log(result);
+		if (err) {
+      			res.send(err)
+      			return;
+    		}
+		res.send(result);
+ 	});
+});
+
+app.post('/teams/player', function(req, res) {
+	console.log(req.body);
+	var userid = req.body.userId;
+	var teamid = req.body.teamId;
+	var playerid = req.body.playerId;
+
+
+
+	var sql = `insert into player_team(player_id, team_id,user_id, date_added) values (${playerid},${teamid},${userid},GETDATE())`;
+	console.log(sql);
+	connection.query(sql, function(err, result) {
+		console.log(result);
+		if (err) {
+			res.send(err)
+			return;
+		}
+		res.send(result);
+	});
+
+});
 
 app.listen(80, function () {
     console.log('Node app is running on port 80');
