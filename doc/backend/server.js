@@ -9,6 +9,8 @@ var connection = mysql.createConnection({
                 database: 'fantasy_soccer_db'
 });
 
+const cors = require('cors');
+
 connection.connect;
 
 var app = express();
@@ -19,7 +21,9 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '../public'));
-
+app.use(cors({
+    origin: '*'
+}));
 /* GET home page, respond by rendering index.ejs */
 
 app.get('/success', function(req, res) {
