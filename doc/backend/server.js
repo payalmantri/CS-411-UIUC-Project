@@ -142,6 +142,33 @@ app.post('/teams/player', function(req, res) {
 
 });
 
+// user register
+app.post('/register', function(req, res) {
+  var name = req.body.name;
+  var password = req.body.password;
+  var email = req.body.email;
+  var role = req.body.role;
+  var sql = `INSERT into user(name, email, password_hash, role, funds_available)
+             VALUES ('${name}', '${email}', '${password}', '${role}', 1000000)`;
+  if (name && password) {
+    console.log(sql);
+    connection.query(sql, function(err, result) {
+      if (err) {
+          if (err.code == 'ER_DUP_ENTRY') {
+            res.send({'message' : 'This email address has already been used!'})
+          }
+          else {
+            res.send(err)
+          }
+        return;
+      }
+      var ret_string = `User Registration Complete (id:${result.insertId})`;
+      res.send({'message' : ret_string});
+      //res.json(result)
+    });
+  }
+});
+
 app.listen(80, function () {
     console.log('Node app is running on port 80');
 });
