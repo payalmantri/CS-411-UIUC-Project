@@ -1,22 +1,40 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from './constants';
 
 const Login = () => {
     const [username, setusername] = useState("");
     const [password, setpassword] = useState("");
     const [authenticated, setauthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated") || false));
-    const users = [{ username: "jane", password: "123" }];
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         console.log("Test");
         e.preventDefault()
-        const account = users.find((user) => user.username === username);
-        if (account && account.password === password) {
-            setauthenticated(true)
-            localStorage.setItem("authenticated", true);
-            navigate("/Home");
-        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: username, password_hash: password })
+        };
+        fetch(`${BASE_URL}/login`, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isAuthenticated == true) {
+                    setauthenticated(true)
+                    localStorage.setItem("authenticated", true);
+                    localStorage.setItem("userId", data.userId)
+                    navigate("/Home");
+                }
+                else {
+                    console.error("Could not login");
+                }
+            });
+        // const account = users.find((user) => user.username === username);
+        // if (account && account.password === password) {
+        //     setauthenticated(true)
+        //     localStorage.setItem("authenticated", true);
+        //     navigate("/Home");
+        // }
     };
 
     const navigateToRegister = () => {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from './constants';
  
 const Register = () => {
  
@@ -37,9 +38,19 @@ const Register = () => {
     if (name === '' || email === '' || password === '') {
       setError(true);
     } else {
-      setSubmitted(true);
-      setError(false);
-      navigate('/');
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: password, role: 'User'})
+      };
+      fetch(`${BASE_URL}/register`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+              setSubmitted(true);
+              setError(false);
+              navigate('/');
+      })
+      .catch(error=>{console.log(error)})
     }
   };
  
@@ -89,6 +100,7 @@ const Register = () => {
  
         <label className="label">Email</label>
         <input onChange={handleEmail} className="input"
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$"
           value={email} type="email" />
  
         <label className="label">Password</label>
