@@ -34,10 +34,32 @@ app.get('/', function(req, res) {
         res.send({'message': 'Hello'});
 });
 
-app.get('/players/:id', function(req, res) {
-	  var playerid = req.params.id;
+/* GET username/password body */
+app.post('/login', function(req, res) {
+	console.log(req.body);
+	var email = req.body.email;
+	var password_hash = req.body.password_hash;
+	var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
+	console.log(sql);	
+	connection.query(sql, function(err, result) {
+    		console.log(result);
+		if (err) {
+      			res.send(err)
+      			return;
+    		}
+		if (result.length == 1) {
+			res.json({isAuthenticated:true,userId:result[0].id})
+		} else {
+			res.json({isAuthenticated:false,userId:null})
+		}
+		console.log(res);
+ 	});
+});
 
-  var sql = `select * from player where id ='${playerid}'`;
+/* GET player using id */
+app.get('/players/:id', function(req, res) {
+	var playerid = req.params.id;
+	var sql = `select * from player where id ='${playerid}'`;
 
 
 
