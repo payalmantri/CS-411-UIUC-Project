@@ -36,20 +36,23 @@ app.get('/', function(req, res) {
 
 /* GET username/password body */
 app.post('/login', function(req, res) {
-	var username = req.body.email;
-	var password = req.body.password;
-	var sql = `select id from users where username ='${username}' and password = '${password}'`;
-	
+	console.log(req.body);
+	var email = req.body.email;
+	var password_hash = req.body.password_hash;
+	var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
+	console.log(sql);	
 	connection.query(sql, function(err, result) {
-    		if (err) {
+    		console.log(result);
+		if (err) {
       			res.send(err)
       			return;
     		}
 		if (result.length == 1) {
-			res.json({isAuthenticated:true,userId:id})
+			res.json({isAuthenticated:true,userId:result[0].id})
 		} else {
 			res.json({isAuthenticated:false,userId:null})
 		}
+		console.log(res);
  	});
 });
 
