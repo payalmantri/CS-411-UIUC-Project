@@ -111,14 +111,21 @@ app.post('/register', function(req, res) {
   var role = req.body.role;
   var sql = `INSERT into user(name, email, password_hash, role, funds_available)
              VALUES ('${name}', '${email}', '${password}', '${role}', 1000000)`;
-  if (username && password) {
+  if (name && password) {
     console.log(sql);
     connection.query(sql, function(err, result) {
       if (err) {
-        res.send(err)
+          if (err.code == 'ER_DUP_ENTRY') {
+            res.send({'message' : 'This email address has already been used!'})
+          }
+          else {
+            res.send(err)
+          }
         return;
       }
-      res.json(result)
+      var ret_string = `User Registration Complete (id:${result.insertId})`;
+      res.send({'message' : ret_string});
+      //res.json(result)
     });
   }
 });
