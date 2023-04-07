@@ -79,8 +79,27 @@ app.get('/lifetimestats/:id', function(req, res) {
     res.json(result)
   });
 });
-	
 
+
+// user register
+app.post('/register', function(req, res) {
+  var name = req.body.name;
+  var password = req.body.password;
+  var email = req.body.email;
+  var role = req.body.role;
+  var sql = `INSERT into user(name, email, password_hash, role, funds_available)
+             VALUES ('${name}', '${email}', '${password}', '${role}', 1000000)`;
+  if (username && password) {
+    console.log(sql);
+    connection.query(sql, function(err, result) {
+      if (err) {
+        res.send(err)
+        return;
+      }
+      res.json(result)
+    });
+  }
+});
 
 app.listen(80, function () {
     console.log('Node app is running on port 80');
