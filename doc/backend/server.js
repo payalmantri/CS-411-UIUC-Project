@@ -73,6 +73,39 @@ console.log(sql);
   });
 });
 
+app.get('/players', async (req, res) => {
+  const { clubName, minValue, maxValue, playerName, position, subposition } = req.query;
+
+  try {
+
+    let params = [];
+
+    let sql = `
+      SELECT *
+      FROM player
+      JOIN club ON player.club_id = club.id
+      WHERE club.name ${clubName ? '= ?' : 'IS NOT NULL'}
+      AND player.current_market_value BETWEEN ${minValue ? '?' : '0'} AND ${maxValue ? '?' : '9999999999'}
+      AND player.name ${playerName ? 'LIKE ?' : 'IS NOT NULL'}
+      AND player.position ${position ? '= ?' : 'IS NOT NULL'}
+      AND player.sub_position ${subposition ? '= ?' : 'IS NOT NULL'}
+    `;
+
+    if (clubName) params.push(clubName);
+    if (minValue) params.push(minValue);
+    if (maxValue) params.push(maxValue);
+    if (playerName) params.push(`%${playerName}%`);
+    if (position) params.push(position);
+    if (subposition) params.push(subposition);
+
+    const [rows] = await connection.execute(sql, params);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching players.' });
+  }
+});
+
 app.get('/lifetimestats/:id', function(req, res) {
 	var tournamentname = req.params.id;
 
