@@ -80,7 +80,7 @@ app.get('/players', async (req, res) => {
     let params = [];
 
     let sql = `
-      SELECT *
+      SELECT  player.id, player.name as playername, player.position, player.sub_position, player.current_market_value, club.name as clubname
       FROM player
       JOIN club ON player.club_id = club.id
       WHERE club.name ${clubName ? '= ?' : 'IS NOT NULL'}
@@ -98,7 +98,8 @@ app.get('/players', async (req, res) => {
     if (subposition) params.push(subposition);
 
     connection.query(sql ,params,  function(err, result) {
-    if (err) {
+   	console.log(this.sql)
+	    if (err) {
           console.error(err);
     res.status(500).json({ message: 'Error fetching players.' });
 	    return ;
