@@ -24,6 +24,19 @@ app.use(express.static(__dirname + '../public'));
 app.use(cors({
     origin: '*'
 }));
+
+function format (date) {
+  if (!(date instanceof Date)) {
+    throw new Error('Invalid "date" argument. You must pass a date instance')
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 /* GET home page, respond by rendering index.ejs */
 
 app.get('/success', function(req, res) {
@@ -153,12 +166,13 @@ app.get('/teams', function(req, res) {
 });
 
 /* add player to team */
-app.post('/teams/player', function(req, res) {
+app.post('/teams/players', function(req, res) {
 	console.log(req.body);
 	var userid = req.body.userId;
 	var teamid = req.body.teamId;
 	var playerid = req.body.playerId;
-	var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},GETDATE())`;
+	var date = format(new Date());
+	var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},'${date}')`;
 	console.log(sql);
 	connection.query(sql, function(err, result) {
 		console.log(result);
@@ -172,12 +186,12 @@ app.post('/teams/player', function(req, res) {
 });
 
 /* delete player from team */
-app.delete('/teams/player', function(req, res) {
+app.delete('/teams/players', function(req, res) {
         console.log(req.query);
         var userId = req.query.userId;
 	var teamId = req.query.teamId;
 	var playerId = req.query.playerId;
-        var sql = `DELETE from player_team where user_id=userId and team_id=teamId and player_id=playerId`;
+        var sql = `DELETE from player_team where user_id = userId and team_id = teamId and player_id = playerId`;
         console.log(sql);
         connection.query(sql, function(err, result) {
                 console.log(result);
@@ -190,7 +204,7 @@ app.delete('/teams/player', function(req, res) {
 });
 
 /* update team name */
-app.put('/team/:id', function(req, res) {
+app.put('/teams/:id', function(req, res) {
         var teamId = req.params.id
         var sql = `UPDATE team set name=newName where id = teamId`;
         console.log(sql);
