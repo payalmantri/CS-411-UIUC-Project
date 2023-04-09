@@ -117,8 +117,8 @@ app.get('/players', async (req, res) => {
   });
 });
 
-app.get('/lifetimestats/:id', function(req, res) {
-	var tournamentname = req.params.id;
+app.get('/tournamentTop15/:tournamentName', function(req, res) {
+	var tournamentname = req.params.tournamentName;
 
 	var sql = `SELECT player_id,
 		       name,
@@ -146,7 +146,7 @@ app.get('/lifetimestats/:id', function(req, res) {
   });
 });
 
-/* Get user team details */
+/* Get user team player details */
 app.get('/teams', function(req, res) {
 	console.log(req.query);
 	var userid = req.query.userId;
@@ -244,6 +244,23 @@ app.post('/register', function(req, res) {
     });
   }
 });
+
+/* get User  teams */
+app.get('/teams', function(req, res) {
+        var userid = req.query.userId;
+        var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url
+                   from team T 
+                   where T.user_id = ${userid}`;
+        console.log(sql);
+        connection.query(sql, function(err, result) {
+                if (err) {
+                        res.send(err)
+                        return;
+                }
+                res.json(result);
+        });
+});
+
 
 app.listen(80, function () {
     console.log('Node app is running on port 80');
