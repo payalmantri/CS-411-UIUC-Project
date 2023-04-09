@@ -80,7 +80,7 @@ app.get('/players', async (req, res) => {
     let params = [];
 
     let sql = `
-      SELECT  player.id, player.name as playername, player.position, player.sub_position, player.current_market_value, club.name as clubname
+      SELECT  player.id, player.name as playername, player.position, player.sub_position as subposition , player.current_market_value as currentMarketValue, club.name as clubname, player.image_url as imageUrl
       FROM player
       JOIN club ON player.club_id = club.id
       WHERE club.name ${clubName ? '= ?' : 'IS NOT NULL'}
