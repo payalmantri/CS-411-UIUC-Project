@@ -17,7 +17,7 @@ var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
- 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '../public'));
@@ -40,7 +40,7 @@ app.post('/login', function(req, res) {
 	var email = req.body.email;
 	var password_hash = req.body.password_hash;
 	var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
-	console.log(sql);	
+	console.log(sql);
 	connection.query(sql, function(err, result) {
     		console.log(result);
 		if (err) {
@@ -60,23 +60,19 @@ app.post('/login', function(req, res) {
 app.get('/players/:id', function(req, res) {
 	var playerid = req.params.id;
 	var sql = `select * from player where id ='${playerid}'`;
-
-
-
-console.log(sql);
-  connection.query(sql, function(err, result) {
-    if (err) {
-      res.send(err)
-      return;
-    }
-    res.json(result)
-  });
+	console.log(sql);
+  	connection.query(sql, function(err, result) {
+    		if (err) {
+      			res.send(err)
+      			return;
+    		}
+    		res.json(result)
+  	});
 });
 
 app.get('/players', async (req, res) => {
-  const { clubName, minMarketValue, maxMarketValue, playerName, position, subposition } = req.query;
- console.log(clubName, minMarketValue, maxMarketValue, playerName, position, subposition)
-  
+    const { clubName, minMarketValue, maxMarketValue, playerName, position, subposition } = req.query;
+    console.log(clubName, minMarketValue, maxMarketValue, playerName, position, subposition)
     let params = [];
 
     let sql = `
@@ -104,7 +100,7 @@ app.get('/players', async (req, res) => {
     res.status(500).json({ message: 'Error fetching players.' });
 	    return ;
     }
-	res.json(result)	
+	res.json(result)
   });
 });
 
@@ -142,29 +138,27 @@ app.get('/teams', function(req, res) {
 	console.log(req.query);
 	var userid = req.query.userId;
 	console.log(userid)
-	var sql = `select T.id, T.name, T.logo_url, P.name as player_name
-		from team T natural join player_team PT natural join player P
-		where T.user_id = ${userid}`;
-	console.log(sql);	
+	var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url, P.name as playerName, P.id as playerId
+                   from team T join player_team PT on T.id=PT.team_id join player P on P.id=PT.player_id
+                   where T.user_id = ${userid}`;
+	console.log(sql);
 	connection.query(sql, function(err, result) {
     		console.log(result);
 		if (err) {
       			res.send(err)
       			return;
     		}
-		res.send(result);
+		res.json(result);
  	});
 });
 
+/* add player to team */
 app.post('/teams/player', function(req, res) {
 	console.log(req.body);
 	var userid = req.body.userId;
 	var teamid = req.body.teamId;
 	var playerid = req.body.playerId;
-
-
-
-	var sql = `insert into player_team(player_id, team_id,user_id, date_added) values (${playerid},${teamid},${userid},GETDATE())`;
+	var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},GETDATE())`;
 	console.log(sql);
 	connection.query(sql, function(err, result) {
 		console.log(result);
@@ -172,12 +166,45 @@ app.post('/teams/player', function(req, res) {
 			res.send(err)
 			return;
 		}
-		res.send(result);
+		res.json(result);
 	});
 
 });
 
-// user register
+/* delete player from team */
+app.delete('/teams/player', function(req, res) {
+        console.log(req.query);
+        var userId = req.query.userId;
+	var teamId = req.query.teamId;
+	var playerId = req.query.playerId;
+        var sql = `DELETE from player_team where user_id=userId and team_id=teamId and player_id=playerId`;
+        console.log(sql);
+        connection.query(sql, function(err, result) {
+                console.log(result);
+                if (err) {
+                        res.send(err)
+                        return;
+                }
+                res.send(result);
+        });
+});
+
+/* update team name */
+app.put('/team/:id', function(req, res) {
+        var teamId = req.params.id
+        var sql = `UPDATE team set name=newName where id = teamId`;
+        console.log(sql);
+        connection.query(sql, function(err, result) {
+                console.log(result);
+                if (err) {
+                        res.send(err)
+                        return;
+                }
+                res.send(result);
+        });
+});
+
+/* user register */
 app.post('/register', function(req, res) {
   var name = req.body.name;
   var password = req.body.password;
