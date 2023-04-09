@@ -147,7 +147,7 @@ app.get('/tournamentTop15/:tournamentName', function(req, res) {
 });
 
 /* Get user team player details */
-app.get('/teams', function(req, res) {
+app.get('/teams/players', function(req, res) {
 	console.log(req.query);
 	var userid = req.query.userId;
 	console.log(userid)
@@ -191,7 +191,7 @@ app.delete('/teams/players', function(req, res) {
         var userId = req.query.userId;
 	var teamId = req.query.teamId;
 	var playerId = req.query.playerId;
-        var sql = `DELETE from player_team where user_id = userId and team_id = teamId and player_id = playerId`;
+        var sql = `DELETE from player_team where user_id = ${userId} and team_id = ${teamId} and player_id = ${playerId}`;
         console.log(sql);
         connection.query(sql, function(err, result) {
                 console.log(result);
@@ -205,8 +205,9 @@ app.delete('/teams/players', function(req, res) {
 
 /* update team name */
 app.put('/teams/:id', function(req, res) {
-        var teamId = req.params.id
-        var sql = `UPDATE team set name=newName where id = teamId`;
+        var teamId = req.params.id;
+	var newName = req.body.newName;
+        var sql = `UPDATE team set name= '${newName}' where id = ${teamId}`;
         console.log(sql);
         connection.query(sql, function(err, result) {
                 console.log(result);
