@@ -1,16 +1,17 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
 import PlayerList from './playerList';
 
-const Home = () => {
+const TeamDetails = () => {
   return (
 
-    <div>
-      <Navbar />
-      <h1>Welcome to GeeksforGeeks</h1>
-      <PlayerList></PlayerList>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'Right',
+      alignItems: 'Right',
+      height: '100vh'
+    }}>
     </div>
   );
 };
 
-export default Home;
+export default TeamDetails;

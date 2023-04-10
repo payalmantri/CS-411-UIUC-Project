@@ -7,7 +7,11 @@ const Login = () => {
     const [password, setpassword] = useState("");
     const [authenticated, setauthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated") || false));
     const navigate = useNavigate();
-
+    const users = [
+        {
+            username: "test",
+            password: "test"
+        }]
     const handleSubmit = (e) => {
         console.log("Test");
         e.preventDefault()
