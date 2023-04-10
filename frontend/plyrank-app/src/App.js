@@ -1,9 +1,8 @@
 
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Login';
-import { useState } from 'react';
-import Register from './Register';
+import Login from './pages/login';
+import Register from './pages/register';
 import MainLayoutRoutes from './MainLayoutRoutes';
 
 function App() {

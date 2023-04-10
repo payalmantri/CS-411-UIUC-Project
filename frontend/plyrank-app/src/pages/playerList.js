@@ -2,13 +2,13 @@ import React from 'react';
 import { BASE_URL } from '../constants';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import './playerList.css'
+import './styles/playerList.scss'
 
 const
 	PlayerList = () => {
 		const [playerList, setData] = React.useState(null);
 		const [showModal, setShowModal] = React.useState(false);
-		const [selectedPlayer, setSelectedPlayer] =React.useState(null);
+		const [selectedPlayer, setSelectedPlayer] = React.useState(null);
 		const [teamNames, setTeamNames] = React.useState(null);
 		const [selectedTeam, setSelectedTeam] = React.useState('');
 
@@ -18,7 +18,7 @@ const
 			setShowModal(true);
 		}
 
-		function   handleModalClose() {
+		function handleModalClose() {
 			setShowModal(false);
 		}
 
@@ -29,7 +29,7 @@ const
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ userId : localStorage.getItem('userId'), teamId: event.target.value, playerId: selectedPlayer.id }),
+				body: JSON.stringify({ userId: localStorage.getItem('userId'), teamId: event.target.value, playerId: selectedPlayer.id }),
 			})
 				.then((res) => res.json())
 				.then((data) => {
@@ -55,7 +55,7 @@ const
 			event.preventDefault();
 			const formData = new FormData(event.target);
 			const data = Object.fromEntries(formData);
-		
+
 			// use fields from data to make a query to the backend as query params
 			// and then set the data to the response
 
@@ -83,38 +83,34 @@ const
 		return (
 			<div className='playerSearch' >
 				{/* search componenent */}
-				<div className='search'>
-					<form onSubmit={fetchPlayers}>
+				<div className='search-container'>
+					<form onSubmit={fetchPlayers} className='search-form'>
 						{/* playername */}
-						<div>
+						<div className='search-input'>
 							<span> Player Name: </span>
 							<input type="text" name="playername" />
 						</div>
+						{/* {club Name} */}
+						<div className='search-input'>
+							<span> Club Name: </span>
+							<input type="text" name="clubname" />
+						</div>
 						{/* position as a select dropdown */}
-						<div>
+						<div className='search-input'>
 							<span> Position: </span>
 							<select name="position">
+								<option value="">Select</option>
 								<option value="Attack">Attack</option>
 								<option value="Defender">Defender</option>
 								<option value="Midfielder">Midfielder</option>
 								<option value="Goalkeeper">Goalkeeper</option>
 							</select>
 						</div>
-						{/* {club Name} */}
-						<div>
-							<span> Club Name: </span>
-							<input type="text" name="clubname" />
-						</div>
-						{/* current Market Value  as min and max */}
-						<div>
-							<span> Current Market Value: </span>
-							<input type="number" name="minMarketValue" placeholder='min' />
-							<input type="number" name="maxMarketValue" placeholder='max' />
-						</div>
 						{/* sub Position as a select dropdown */}
-						<div>
+						<div className='search-input'>
 							<span> Sub Position: </span>
 							<select name="subposition">
+								<option value="">Select</option>
 								<option value="Centre-Back">Center Back</option>
 								<option value="Centre-Forward">Center Forward</option>
 								<option value="Central Midfield">Central Midfield</option>
@@ -123,13 +119,18 @@ const
 								<option value="Left-Back">Left Back</option>
 							</select>
 						</div>
-						<div >
+
+						{/* current Market Value  as min and max */}
+						<div className='search-input'>
+							<span> Current Market Value: </span>
+							<input type="number" name="minMarketValue" placeholder='min' />
+							<input type="number" name="maxMarketValue" placeholder='max' />
+						</div>
+
+						<div className='search-input submit-button'>
 							<input type="submit" value="Submit" />
 						</div>
 					</form>
-
-					<hr></hr>
-
 				</div>
 
 				<div>
@@ -158,46 +159,46 @@ const
 										<td>{player.currentMarketValue}</td>
 										<td>{player.subposition}</td>
 										<td>
-                  <button onClick={() => handleAddPlayerToTeam(player)}>Add to Team</button>
-                </td>
+											<button onClick={() => handleAddPlayerToTeam(player)}>Add to Team</button>
+										</td>
 									</tr>
 								))}
 							</tbody>
 						</table>
 					)}
-						{ selectedPlayer && (
-							 <Modal
-							 show={showModal}
-							 onHide={handleModalClose}
-							 backdrop="static"
-							 keyboard={false}
-						 >
-							 <Modal.Header closeButton>
-								 <Modal.Title>Add Player to Team</Modal.Title>
-							 </Modal.Header>
-							 <Modal.Body>
-								 <p>Are you sure you want to add {selectedPlayer.playername} to your team?</p>
-								 <label htmlFor="team-select">Select a team:</label>
-								 <select id="team-select" value={selectedTeam} onChange={handleTeamSelect}>
-									 <option value="">-- Select a team --</option>
-									 {teamNames.map((team) => (
-										 <option key={team.teamId} value={team.teamId}>
-											 {team.teamName}
-										 </option>
-									 ))}
-								 </select>
+					{selectedPlayer && (
+						<Modal
+							show={showModal}
+							onHide={handleModalClose}
+							backdrop="static"
+							keyboard={false}
+						>
+							<Modal.Header closeButton>
+								<Modal.Title>Add Player to Team</Modal.Title>
+							</Modal.Header>
+							<Modal.Body>
+								<p>Are you sure you want to add {selectedPlayer.playername} to your team?</p>
+								<label htmlFor="team-select">Select a team:</label>
+								<select id="team-select" value={selectedTeam} onChange={handleTeamSelect}>
+									<option value="">-- Select a team --</option>
+									{teamNames.map((team) => (
+										<option key={team.teamId} value={team.teamId}>
+											{team.teamName}
+										</option>
+									))}
+								</select>
 							</Modal.Body>
-							 <Modal.Footer>
-								 <Button variant="secondary" onClick={handleModalClose}>
-									 Cancel
-										</Button>
-										<Button variant="primary" onClick={handleAddPlayerToTeam}>
-											Add Player
-										</Button>
-									</Modal.Footer>
-								</Modal>
-							)}
-					
+							<Modal.Footer>
+								<Button variant="secondary" onClick={handleModalClose}>
+									Cancel
+								</Button>
+								<Button variant="primary" onClick={handleAddPlayerToTeam}>
+									Add Player
+								</Button>
+							</Modal.Footer>
+						</Modal>
+					)}
+
 				</div>
 
 			</div>

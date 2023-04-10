@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ClubDetails from './pages/clubList';
 import PlayerList from './pages/playerList';
-import TeamDetails from './pages/index';
+import TeamDetails from './pages/teamDetails';
 import Navbar from './components/Navbar';
 
 
