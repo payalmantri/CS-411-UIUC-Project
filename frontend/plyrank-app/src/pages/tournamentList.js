@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BASE_URL } from '../constants';
 import Button from 'react-bootstrap/esm/Button';
-
+import Table from 'react-bootstrap/Table';
 import './styles/tournamentList.scss';
 import TournamentTopPlayers from './tournamentTop15';
 
@@ -16,7 +16,7 @@ const TournamentList = ()=> {
       try {
         const response = await fetch(`${BASE_URL}/tournaments`)
         let data = await response.json();
-        data = data.splice(0, 10);
+        // data = data.splice(0, 10);
         setTournaments(data);
       } catch (error) {
         console.error(error);
@@ -30,7 +30,7 @@ const TournamentList = ()=> {
         setTournaments([...tournaments]);
     }
   return (
-    <div>
+    <div className='tournament-list'>
       <h2>Tournament List</h2>
      
       <table className='tournament-table'>
@@ -42,6 +42,7 @@ const TournamentList = ()=> {
             <th>Country</th>
             <th>Type</th>
             <th>Sub Type</th>
+            <th></th>
           </tr>
         </thead>
       

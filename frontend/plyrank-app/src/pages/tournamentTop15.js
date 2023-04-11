@@ -17,7 +17,7 @@ function TournamentTopPlayers({ tournamentID }) {
   return (
     <div>
       <h2>Top 15 Players for Tournament {tournamentID}</h2>
-      <table>
+      <table className='players-table'>
         <thead>
           <tr>
             <th>Player Name</th>

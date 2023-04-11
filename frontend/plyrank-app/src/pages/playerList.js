@@ -72,12 +72,41 @@ const
 			})
 				.then((res) => res.json())
 				.then((data) => {
-					console.log(data);
 					// get only top 15 players
 					data = data.slice(0, 15);
 					setData(data);
 				});
 		};
+
+		function showPlayerDetails(player) {
+			player.isExpanded = !player.isExpanded;
+			// player.lifetimeStats = {}
+			setData([...playerList]);
+			if(player.isExpanded && !player.lifetimeStats) {
+				fetchPlayerDetails(player);
+			}
+		}
+
+		function fetchPlayerDetails(player) {
+
+			fetch(`${BASE_URL}/lifetimestats/${player.id}`)
+				.then((res) => res.json())
+				.then((data) => {
+					
+					if(data.length > 0) {
+						player.lifetimeStats =  data[0];
+					}
+					console.log(player);
+					setData([...playerList]);
+				})
+				.catch((error) => {
+					player.isExpanded = false;
+					console.error(error);
+				});
+				}
+
+
+				
 
 
 		return (
@@ -148,12 +177,15 @@ const
 								</tr>
 							</thead>
 							<tbody>
-								{playerList.map((player) => (
+								{playerList.map((player) => 
+								<>
 									<tr id={player.id} key={player.id}>
 										<td>
 											<img src={player.imageUrl} alt={`Image of ${player.playername}`} />
 										</td>
-										<td>{player.playername}</td>
+										{/* Make name as link clicking on which should call the method showPlayerDetails */}
+										<td onClick={() => showPlayerDetails(player)}>{player.playername}</td>
+
 										<td>{player.position}</td>
 										<td>{player.clubname}</td>
 										<td>{player.currentMarketValue}</td>
@@ -162,11 +194,35 @@ const
 											<button onClick={() => handleAddPlayerToTeam(player)}>Add to Team</button>
 										</td>
 									</tr>
-								))}
+									<>
+									{ player.isExpanded && (
+										<tr className='playerDetails'>
+											<td colSpan='7'>
+												{ player.lifetimeStats && (
+													<>
+														<p>Goals: {player.lifetimeStats.goals}</p>
+														<p>Assists: {player.lifetimeStats.assists}</p>
+														<p>Yellow Cards: {player.lifetimeStats.yellow_cards}</p>
+														<p>Red Cards: {player.lifetimeStats.red_cards}</p>
+													</>
+												)}
+												{ !player.lifetimeStats && (
+													<p>No lifetime stats available</p>
+												)}
+												
+											</td>
+										</tr>
+
+										)}
+									</>
+								</>
+
+								)}
+								
 							</tbody>
 						</table>
 					)}
-					{selectedPlayer && (
+					{ selectedPlayer && (
 						<Modal
 							show={showModal}
 							onHide={handleModalClose}

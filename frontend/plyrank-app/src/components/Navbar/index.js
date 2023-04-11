@@ -24,6 +24,9 @@ return (
 		<NavLink to='/ClubDetails' >
 			Clubs
 		</NavLink>
+		<NavLink to='/TournamentList' >
+			Tournaments
+		</NavLink>
 		{/* Second Nav */}
 		{/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
 		</NavMenu>
