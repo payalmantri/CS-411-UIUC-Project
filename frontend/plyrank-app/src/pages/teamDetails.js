@@ -4,32 +4,32 @@ import { useState } from 'react';
 import Table from '../table';
 import './styles/teamDetails.scss';
 import { BASE_URL } from '../constants';
-const fakeData = [
-  {
-    "id": "12",
-    "name": "PlayFc",
-    "logo_url": "http://www.example.com/bells?balance=authority&attack=bone",
-    "player_name": "Lionel Messi"
-  },
-  {
-    "id": "21",
-    "name": "BackFc",
-    "logo_url": "http://www.example.com/",
-    "player_name": "Jacob Strowski"
-  },
-  {
-    "id": "21",
-    "name": "BackFc",
-    "logo_url": "http://www.example.com/brother/brother.aspx",
-    "player_name": "Dan James"
-  },
-  {
-    "id": "12",
-    "name": "PlayFc",
-    "logo_url": "http://example.org/?bone=anger&birth=acoustics",
-    "player_name": "Blue Man"
-  },
-];
+// const fakeData = [
+//   {
+//     "id": "12",
+//     "name": "PlayFc",
+//     "logo_url": "http://www.example.com/bells?balance=authority&attack=bone",
+//     "player_name": "Lionel Messi"
+//   },
+//   {
+//     "id": "21",
+//     "name": "BackFc",
+//     "logo_url": "http://www.example.com/",
+//     "player_name": "Jacob Strowski"
+//   },
+//   {
+//     "id": "21",
+//     "name": "BackFc",
+//     "logo_url": "http://www.example.com/brother/brother.aspx",
+//     "player_name": "Dan James"
+//   },
+//   {
+//     "id": "12",
+//     "name": "PlayFc",
+//     "logo_url": "http://example.org/?bone=anger&birth=acoustics",
+//     "player_name": "Blue Man"
+//   },
+// ];
 
 
 const TeamDetails = () => {
@@ -52,28 +52,6 @@ const TeamDetails = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        let arrLen = fakeData.length;
-        let existingTeam = [];
-        for (let i = 0; i < arrLen; i++) {
-          const { id, name, logo_url, player_name } = fakeData[i];
-          const exists = existingTeam.findIndex(team => team.id === id && team.name === name);
-          console.log(exists);
-          if (exists != -1) {
-            existingTeam[exists].player_names.push(player_name);
-          } else {
-
-            existingTeam.push({
-              id: id,
-              name: name,
-              logo_url: logo_url,
-              player_names: [player_name]
-            });
-          }
-        }
-        console.log(existingTeam);
-
-        updateTeamData(existingTeam);
-
 
         window.location.reload();
       })
@@ -85,6 +63,36 @@ const TeamDetails = () => {
     setTeamLogoUrl('');
     setShowForm(false);
   };
+
+
+  React.useEffect(() => {
+    // Fetch team names from API
+    fetch(`${BASE_URL}/teams/players?userId=${localStorage.getItem('userId')}`)
+      .then((response) => response.json())
+      .then((data) => {
+        let arrLen = data.length;
+        let existingTeam = [];
+        for (let i = 0; i < arrLen; i++) {
+          const { teamId, teamName, logo_url, playerName, playerId } = data[i];
+          const exists = existingTeam.findIndex(team => team.id === teamId && team.name === teamName);
+          console.log(exists);
+          if (exists != -1) {
+            existingTeam[exists].player_names.push(playerName);
+          } else {
+            existingTeam.push({
+              id: teamId,
+              name: teamName,
+              logo_url: logo_url,
+              player_id: playerId,
+              player_names: [playerName]
+            });
+          }
+        }
+        updateTeamData(existingTeam);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
 
   // setShowForm(!showForm) is used to toggle the form
   function toggleForm() {
@@ -111,10 +119,10 @@ const TeamDetails = () => {
             <input type="text" value={teamLogoUrl} onChange={(e) => setTeamLogoUrl(e.target.value)} />
           </label>
           <br />
-          
+          <button onClick={handleFormSubmit}>Submit</button>
         </form>
       )}
-        <button onClick={handleFormSubmit}>Show Teams</button>
+
       </div>
       <div className='team-list'>
         {/* TODO : Show list of teams  with players table here */}
@@ -122,7 +130,7 @@ const TeamDetails = () => {
       </div>
       {teamData.map((d, idx) => {
         return (
-          <Table teamName={d.name} key={d.name} playerNames={d.player_names} />
+          <Table teamName={d.name} key={d.name} playerNames={d.player_names} teamId={d.id} playerId={d.player_id} />
         )
       })}
 
