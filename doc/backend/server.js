@@ -153,7 +153,7 @@ app.get('/teams/players', function (req, res) {
   var userid = req.query.userId;
   console.log(userid)
   var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url, P.name as playerName, P.id as playerId
-                   from team T join player_team PT on T.id=PT.team_id join player P on P.id=PT.player_id
+                   from team T left outer join player_team PT on T.id=PT.team_id left outer join player P on P.id=PT.player_id
                    where T.user_id = ${userid}`;
   console.log(sql);
   connection.query(sql, function (err, result) {
