@@ -75,10 +75,19 @@ const TeamDetails = () => {
         for (let i = 0; i < arrLen; i++) {
           const { teamId, teamName, logo_url, playerName, playerId } = data[i];
           const exists = existingTeam.findIndex(team => team.id === teamId && team.name === teamName);
-          console.log(exists);
+        
           if (exists != -1) {
             existingTeam[exists].player_names.push(playerName);
           } else {
+            if(playerName === null) {
+                existingTeam.push({
+                  id: teamId,
+                  name: teamName,
+                  logo_url: logo_url,
+                  player_id: playerId,
+                  player_names: []
+                });
+            } else {
             existingTeam.push({
               id: teamId,
               name: teamName,
@@ -87,6 +96,7 @@ const TeamDetails = () => {
               player_names: [playerName]
             });
           }
+        }
         }
         updateTeamData(existingTeam);
       })

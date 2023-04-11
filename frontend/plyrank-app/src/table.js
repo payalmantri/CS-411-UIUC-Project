@@ -71,6 +71,7 @@ function Table(props) {
           </div>
         )
       })}
+      { playerNames.length === 0 && <div className='row' key={teamId}> No players added yet </div>}
 
 
     </div>
