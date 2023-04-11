@@ -4,11 +4,12 @@ import { useState } from 'react';
 
 
 function Table(props) {
+  console.log("props",props);
   const [showEditPage, setShowEditPage] = React.useState(false);
-  const { teamName, playerNames, teamId, playerId } = props;
+  const { teamName, players, teamId } = props;
   const [newteamName, setNewTeamName] = useState('');
-  const deletePlayer = (e) => {
-    e.preventDefault();
+  function deletePlayer(playerId) {
+    // e.preventDefault();
     fetch(`${BASE_URL}/teams/players?userId=${localStorage.getItem('userId')}&teamId=${teamId}&playerId=${playerId}`, {
       method: 'DELETE',
       headers: {
@@ -62,16 +63,16 @@ function Table(props) {
 
 
       </div>
-      {playerNames.map((d, idx) => {
+      {players.map((d, idx) => {
         return (
-          <div className='row' key={d}>
-            {d}
+          <div className='row' key={d.playerName}>
+            {d.playerName}
             <span>
-              <button onClick={deletePlayer}>Delete</button></span>
+              <button onClick={() => deletePlayer(d.playerId)}>Delete</button></span>
           </div>
         )
       })}
-      { playerNames.length === 0 && <div className='row' key={teamId}> No players added yet </div>}
+      { players.length === 0 && <div className='row' key={teamId}> No players added yet </div>}
 
 
     </div>

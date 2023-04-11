@@ -77,14 +77,13 @@ const TeamDetails = () => {
           const exists = existingTeam.findIndex(team => team.id === teamId && team.name === teamName);
         
           if (exists != -1) {
-            existingTeam[exists].player_names.push(playerName);
-          } else {
+            existingTeam[exists].player_names.push({playerId, playerName});
+                 } else {
             if(playerName === null) {
                 existingTeam.push({
                   id: teamId,
                   name: teamName,
                   logo_url: logo_url,
-                  player_id: playerId,
                   player_names: []
                 });
             } else {
@@ -92,8 +91,7 @@ const TeamDetails = () => {
               id: teamId,
               name: teamName,
               logo_url: logo_url,
-              player_id: playerId,
-              player_names: [playerName]
+              player_names: [{playerId, playerName}]
             });
           }
         }
@@ -140,7 +138,7 @@ const TeamDetails = () => {
       </div>
       {teamData.map((d, idx) => {
         return (
-          <Table teamName={d.name} key={d.name} playerNames={d.player_names} teamId={d.id} playerId={d.player_id} />
+          <Table teamName={d.name} key={d.name} players={d.player_names} teamId={d.id} />
         )
       })}
 
