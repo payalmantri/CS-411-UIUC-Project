@@ -3,10 +3,10 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql2');
 var path = require('path');
 var connection = mysql.createConnection({
-                host: '34.121.2.8',
-                user: 'root',
-                password: 'test1234',
-                database: 'fantasy_soccer_db'
+  host: '34.121.2.8',
+  user: 'root',
+  password: 'test1234',
+  database: 'fantasy_soccer_db'
 });
 
 const cors = require('cors');
@@ -22,10 +22,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '../public'));
 app.use(cors({
-    origin: '*'
+  origin: '*'
 }));
 
-function format (date) {
+function format(date) {
   if (!(date instanceof Date)) {
     throw new Error('Invalid "date" argument. You must pass a date instance')
   }
@@ -39,56 +39,56 @@ function format (date) {
 
 /* GET home page, respond by rendering index.ejs */
 
-app.get('/success', function(req, res) {
-      res.send({'message': 'Attendance marked successfully!'});
+app.get('/success', function (req, res) {
+  res.send({ 'message': 'Attendance marked successfully!' });
 });
 
-app.get('/', function(req, res) {
-        res.send({'message': 'Hello'});
+app.get('/', function (req, res) {
+  res.send({ 'message': 'Hello' });
 });
 
 /* Validate username and password */
-app.post('/login', function(req, res) {
-	console.log(req.body);
-	var email = req.body.email;
-	var password_hash = req.body.password_hash;
-	var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
-	console.log(sql);
-	connection.query(sql, function(err, result) {
-    		console.log(result);
-		if (err) {
-      			res.send(err)
-      			return;
-    		}
-		if (result.length == 1) {
-			res.json({isAuthenticated:true,userId:result[0].id})
-		} else {
-			res.json({isAuthenticated:false,userId:null})
-		}
-		console.log(res);
- 	});
+app.post('/login', function (req, res) {
+  console.log(req.body);
+  var email = req.body.email;
+  var password_hash = req.body.password_hash;
+  var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    console.log(result);
+    if (err) {
+      res.send(err)
+      return;
+    }
+    if (result.length == 1) {
+      res.json({ isAuthenticated: true, userId: result[0].id })
+    } else {
+      res.json({ isAuthenticated: false, userId: null })
+    }
+    console.log(res);
+  });
 });
 
 /* GET player using id */
-app.get('/players/:id', function(req, res) {
-	var playerid = req.params.id;
-	var sql = `select * from player where id ='${playerid}'`;
-	console.log(sql);
-  	connection.query(sql, function(err, result) {
-    		if (err) {
-      			res.send(err)
-      			return;
-    		}
-    		res.json(result)
-  	});
+app.get('/players/:id', function (req, res) {
+  var playerid = req.params.id;
+  var sql = `select * from player where id ='${playerid}'`;
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.json(result)
+  });
 });
 
 app.get('/players', async (req, res) => {
-    const { clubName, minMarketValue, maxMarketValue, playerName, position, subposition } = req.query;
-    console.log(clubName, minMarketValue, maxMarketValue, playerName, position, subposition)
-    let params = [];
+  const { clubName, minMarketValue, maxMarketValue, playerName, position, subposition } = req.query;
+  console.log(clubName, minMarketValue, maxMarketValue, playerName, position, subposition)
+  let params = [];
 
-    let sql = `
+  let sql = `
       SELECT  player.id, player.name as playername, player.position, player.sub_position as subposition , player.current_market_value as currentMarketValue, club.name as clubname, player.image_url as imageUrl
       FROM player
       JOIN club ON player.club_id = club.id
@@ -99,28 +99,29 @@ app.get('/players', async (req, res) => {
       AND player.sub_position ${subposition ? '= ?' : 'IS NOT NULL'}
     `;
 
-    if (clubName) params.push(clubName);
-    if (minMarketValue) params.push(minMarketValue);
-    if (maxMarketValue) params.push(maxMarketValue);
-    if (playerName) params.push(`%${playerName}%`);
-    if (position) params.push(position);
-    if (subposition) params.push(subposition);
+  if (clubName) params.push(clubName);
+  if (minMarketValue) params.push(minMarketValue);
+  if (maxMarketValue) params.push(maxMarketValue);
+  if (playerName) params.push(`%${playerName}%`);
+  if (position) params.push(position);
+  if (subposition) params.push(subposition);
 
-    connection.query(sql ,params,  function(err, result) {
-   	console.log(this.sql)
-	    if (err) {
-          console.error(err);
-    res.status(500).json({ message: 'Error fetching players.' });
-	    return ;
+  connection.query(sql, params, function (err, result) {
+    console.log(this.sql)
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error fetching players.' });
+      return;
     }
-	res.json(result)
+    res.json(result)
   });
 });
 
-app.get('/tournamentTop15/:tournamentName', function(req, res) {
-	var tournamentname = req.params.tournamentName;
+/* Get top 15 players in a tournament */
+app.get('/tournamentTop15/:tournamentName', function (req, res) {
+  var tournamentname = req.params.tournamentName;
 
-	var sql = `SELECT player_id,
+  var sql = `SELECT player_id,
 		       name,
 		       sum(goals) AS goals,
 		       sum(assists) AS assists,
@@ -136,8 +137,8 @@ app.get('/tournamentTop15/:tournamentName', function(req, res) {
 		GROUP BY player_id
 		ORDER BY total_points DESC
 		LIMIT 15`;
-	console.log(sql);
-  connection.query(sql, function(err, result) {
+  console.log(sql);
+  connection.query(sql, function (err, result) {
     if (err) {
       res.send(err)
       return;
@@ -147,80 +148,80 @@ app.get('/tournamentTop15/:tournamentName', function(req, res) {
 });
 
 /* Get user team player details */
-app.get('/teams/players', function(req, res) {
-	console.log(req.query);
-	var userid = req.query.userId;
-	console.log(userid)
-	var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url, P.name as playerName, P.id as playerId
+app.get('/teams/players', function (req, res) {
+  console.log(req.query);
+  var userid = req.query.userId;
+  console.log(userid)
+  var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url, P.name as playerName, P.id as playerId
                    from team T join player_team PT on T.id=PT.team_id join player P on P.id=PT.player_id
                    where T.user_id = ${userid}`;
-	console.log(sql);
-	connection.query(sql, function(err, result) {
-    		console.log(result);
-		if (err) {
-      			res.send(err)
-      			return;
-    		}
-		res.json(result);
- 	});
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    console.log(result);
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.json(result);
+  });
 });
 
 /* add player to team */
-app.post('/teams/players', function(req, res) {
-	console.log(req.body);
-	var userid = req.body.userId;
-	var teamid = req.body.teamId;
-	var playerid = req.body.playerId;
-	var date = format(new Date());
-	var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},'${date}')`;
-	console.log(sql);
-	connection.query(sql, function(err, result) {
-		console.log(result);
-		if (err) {
-			res.send(err)
-			return;
-		}
-		res.json(result);
-	});
+app.post('/teams/players', function (req, res) {
+  console.log(req.body);
+  var userid = req.body.userId;
+  var teamid = req.body.teamId;
+  var playerid = req.body.playerId;
+  var date = format(new Date());
+  var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},'${date}')`;
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    console.log(result);
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.json(result);
+  });
 
 });
 
 /* delete player from team */
-app.delete('/teams/players', function(req, res) {
-        console.log(req.query);
-        var userId = req.query.userId;
-	var teamId = req.query.teamId;
-	var playerId = req.query.playerId;
-        var sql = `DELETE from player_team where user_id = ${userId} and team_id = ${teamId} and player_id = ${playerId}`;
-        console.log(sql);
-        connection.query(sql, function(err, result) {
-                console.log(result);
-                if (err) {
-                        res.send(err)
-                        return;
-                }
-                res.send(result);
-        });
+app.delete('/teams/players', function (req, res) {
+  console.log(req.query);
+  var userId = req.query.userId;
+  var teamId = req.query.teamId;
+  var playerId = req.query.playerId;
+  var sql = `DELETE from player_team where user_id = ${userId} and team_id = ${teamId} and player_id = ${playerId}`;
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    console.log(result);
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.send(result);
+  });
 });
 
 /* update team name */
-app.put('/teams/:id', function(req, res) {
-        var teamId = req.params.id;
-	var newName = req.body.newName;
-        var sql = `UPDATE team set name= '${newName}' where id = ${teamId}`;
-        console.log(sql);
-        connection.query(sql, function(err, result) {
-                console.log(result);
-                if (err) {
-                        res.send(err)
-                        return;
-                }
-                res.send(result);
-        });
+app.put('/teams/:id', function (req, res) {
+  var teamId = req.params.id;
+  var newName = req.body.newName;
+  var sql = `UPDATE team set name= '${newName}' where id = ${teamId}`;
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    console.log(result);
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.send(result);
+  });
 });
 
 /* user register */
-app.post('/register', function(req, res) {
+app.post('/register', function (req, res) {
   var name = req.body.name;
   var password = req.body.password;
   var email = req.body.email;
@@ -229,40 +230,99 @@ app.post('/register', function(req, res) {
              VALUES ('${name}', '${email}', '${password}', '${role}', 1000000)`;
   if (name && password) {
     console.log(sql);
-    connection.query(sql, function(err, result) {
+    connection.query(sql, function (err, result) {
       if (err) {
-          if (err.code == 'ER_DUP_ENTRY') {
-            res.send({'message' : 'This email address has already been used!'})
-          }
-          else {
-            res.send(err)
-          }
+        if (err.code == 'ER_DUP_ENTRY') {
+          res.send({ 'message': 'This email address has already been used!' })
+        }
+        else {
+          res.send(err)
+        }
         return;
       }
       var ret_string = `User Registration Complete (id:${result.insertId})`;
-      res.send({'message' : ret_string});
+      res.send({ 'message': ret_string });
       //res.json(result)
     });
   }
 });
 
 /* get User  teams */
-app.get('/teams', function(req, res) {
-        var userid = req.query.userId;
-        var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url
+app.get('/teams', function (req, res) {
+  var userid = req.query.userId;
+  var sql = `SELECT T.id as teamId, T.name as teamName, T.logo_url
                    from team T 
                    where T.user_id = ${userid}`;
-        console.log(sql);
-        connection.query(sql, function(err, result) {
-                if (err) {
-                        res.send(err)
-                        return;
-                }
-                res.json(result);
-        });
+  console.log(sql);
+  connection.query(sql, function (err, result) {
+    if (err) {
+      res.send(err)
+      return;
+    }
+    res.json(result);
+  });
+});
+// create a new team for a user
+app.post('/teams', function (req, res) {
+  var name = req.body.name;
+  var logo_url = req.body.logoUrl;
+  var user_id = req.body.userId;
+  var sql = `INSERT into team(name, logo_url, user_id)
+              VALUES ('${name}', '${logo_url}', '${user_id}')`;
+  if (name && logo_url && user_id) {
+    console.log(sql);
+    connection.query(sql, function (err, result) {
+      if (err) {
+        res.send(err)
+        return;
+      }
+      var ret_string = `Team Creation Complete (id:${result.insertId})`;
+      res.send({ 'message': ret_string });
+    });
+  }
+});
+
+//  fetch lifetime stats for a player 
+app.get('/lifetimestats/:id', function (req, res) {
+  var playerid = req.params.id;
+  var sql = `SELECT player_id,
+  name,
+  sum(goals) AS goals,
+  sum(assists) AS assists,
+  sum(yellow_cards) AS yellow_cards,
+  sum(red_cards) AS red_cards,
+  sum(goals) + sum(assists) AS total_points
+FROM game_player_stats
+INNER JOIN player ON player.id = game_player_stats.player_id
+WHERE player.name = '${playerid}'
+GROUP BY player_id
+ORDER BY total_points DESC`;
+
+  connection.query(sql, function (err, result) {
+    if (err) {
+      res.status(500).send(err)
+      return;
+    }
+    res.json(result)
+  });
+});
+
+
+// fetch tournament details  for 
+app.get('/tournaments', function (req, res) {
+  var sql = `SELECT * FROM tournament`;
+  connection.query(sql, function (err, result) {
+    if (err) {
+      res.message("Unable to fetch tournaments");
+      res.status(500).send(err)
+      return;
+    }
+    res.json(result)
+  });
+
 });
 
 
 app.listen(80, function () {
-    console.log('Node app is running on port 80');
+  console.log('Node app is running on port 80');
 });
