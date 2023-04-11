@@ -118,8 +118,8 @@ app.get('/players', async (req, res) => {
 });
 
 /* Get top 15 players in a tournament */
-app.get('/tournamentTop15/:tournamentName', function (req, res) {
-  var tournamentname = req.params.tournamentName;
+app.get('/tournamentTop15/:tournamentId', function (req, res) {
+  var tournamentId = req.params.tournamentId;
 
   var sql = `SELECT player_id,
 		       name,
@@ -133,7 +133,7 @@ app.get('/tournamentTop15/:tournamentName', function (req, res) {
 		WHERE game_id in
 		    (SELECT id
 		     FROM Games
-		     WHERE tournament_id = (SELECT id FROM tournament WHERE name = '${tournamentname}'))
+		     WHERE tournament_id = (SELECT id FROM tournament T WHERE T.id = '${tournamentId}'))
 		GROUP BY player_id
 		ORDER BY total_points DESC
 		LIMIT 15`;
