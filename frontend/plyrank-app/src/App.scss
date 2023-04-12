@@ -1,5 +1,17 @@
 .App {
   text-align: center;
+
+  table {
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+    }
+  }
 }
 
 .App-logo {
@@ -32,6 +44,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

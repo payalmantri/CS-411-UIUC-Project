@@ -131,7 +131,7 @@ const
 								<option value="">Select</option>
 								<option value="Attack">Attack</option>
 								<option value="Defender">Defender</option>
-								<option value="Midfielder">Midfielder</option>
+								<option value="Midfield">Midfielder</option>
 								<option value="Goalkeeper">Goalkeeper</option>
 							</select>
 						</div>

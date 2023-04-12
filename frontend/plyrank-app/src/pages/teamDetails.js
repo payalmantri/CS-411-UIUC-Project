@@ -1,36 +1,9 @@
 import React from 'react';
 import Button from 'react-bootstrap/esm/Button';
 import { useState } from 'react';
-import Table from '../table';
+import TeamTable from './teamtable';
 import './styles/teamDetails.scss';
 import { BASE_URL } from '../constants';
-// const fakeData = [
-//   {
-//     "id": "12",
-//     "name": "PlayFc",
-//     "logo_url": "http://www.example.com/bells?balance=authority&attack=bone",
-//     "player_name": "Lionel Messi"
-//   },
-//   {
-//     "id": "21",
-//     "name": "BackFc",
-//     "logo_url": "http://www.example.com/",
-//     "player_name": "Jacob Strowski"
-//   },
-//   {
-//     "id": "21",
-//     "name": "BackFc",
-//     "logo_url": "http://www.example.com/brother/brother.aspx",
-//     "player_name": "Dan James"
-//   },
-//   {
-//     "id": "12",
-//     "name": "PlayFc",
-//     "logo_url": "http://example.org/?bone=anger&birth=acoustics",
-//     "player_name": "Blue Man"
-//   },
-// ];
-
 
 const TeamDetails = () => {
 
@@ -136,9 +109,9 @@ const TeamDetails = () => {
         {/* TODO : Show list of teams  with players table here */}
 
       </div>
-      {teamData.map((d, idx) => {
+      {teamData.map((d) => {
         return (
-          <Table teamName={d.name} key={d.name} players={d.player_names} teamId={d.id} />
+          <TeamTable teamName={d.name} key={d.name} players={d.player_names} teamId={d.id} />
         )
       })}
 
