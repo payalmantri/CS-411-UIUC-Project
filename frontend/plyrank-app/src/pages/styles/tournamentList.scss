@@ -1,0 +1,34 @@
+.tournament-list {
+    .tournament-table {
+         width: 90%;
+         margin: auto;
+        border-collapse: collapse;
+       th, td {
+            border: 1px solid #ddd;
+          padding: 0.5rem;
+       }
+
+    //    add alternating row colors
+        //  tr:nth-child(even) {
+        //       background-color: #f2f2f2;
+        //  }
+
+       .expanded-row {
+            background-color: #f2f2f2;
+       
+
+            .players-table {
+                border-collapse: collapse;
+                border: 1px solid black;
+                width: 80%;
+                margin: auto;
+
+                th, td {
+                    border: 1px solid black;
+                    padding: 0.5rem;
+                }
+
+            }
+       }
+    }
+}

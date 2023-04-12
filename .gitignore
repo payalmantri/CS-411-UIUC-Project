@@ -1,0 +1,5 @@
+/frontend/node_modules/*
+/frontend/plyrank-app/build/*
+/frontend/plyrank-app/node_modules/*
+package-lock.json
+/doc/backend/node_modules
