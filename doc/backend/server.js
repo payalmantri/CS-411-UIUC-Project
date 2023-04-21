@@ -175,14 +175,18 @@ app.post('/teams/players', function (req, res) {
   var date = format(new Date());
   var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},'${date}')`;
   console.log(sql);
-  connection.query(sql, function (err, result) {
+   connection.query(sql, function (err, result) {
     console.log(result);
     if (err) {
-      res.send(err)
+      res.send(err);
+      return;
+    } else if (result.affectedRows === 0) {
+      res.status(400).json({ message: "Could not add player to team. The team may already have 11 players." });
       return;
     }
     res.json(result);
   });
+
 
 });
 
