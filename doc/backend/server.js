@@ -61,9 +61,9 @@ app.post('/login', function (req, res) {
       return;
     }
     if (result.length == 1) {
-      res.json({ isAuthenticated: true, userId: result[0].id })
+      res.json({ isAuthenticated: true, userId: result[0].id, userRole: result[0].role})
     } else {
-      res.json({ isAuthenticated: false, userId: null })
+      res.json({ isAuthenticated: false, userId: null, userRole: null})
     }
     console.log(res);
   });
@@ -322,6 +322,19 @@ app.get('/tournaments', function (req, res) {
 
 });
 
+// fetch club list
+app.get('/clubs', function (req, res) {
+  var sql = `SELECT * FROM club`;
+  connection.query(sql, function (err, result) {
+    if (err) {
+      res.message("Unable to fetch clubs");
+      res.status(500).send(err)
+      return;
+    }
+    res.json(result)
+  });
+
+});
 
 app.listen(80, function () {
   console.log('Node app is running on port 80');
