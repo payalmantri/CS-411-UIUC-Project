@@ -52,7 +52,7 @@ app.post('/login', function (req, res) {
   console.log(req.body);
   var email = req.body.email;
   var password_hash = req.body.password_hash;
-  var sql = `select id from user where email ='${email}' and password_hash = '${password_hash}'`;
+  var sql = `select id, role from user where email ='${email}' and password_hash = '${password_hash}'`;
   console.log(sql);
   connection.query(sql, function (err, result) {
     console.log(result);
