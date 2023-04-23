@@ -178,6 +178,7 @@ app.post('/teams/players', function (req, res) {
    connection.query(sql, function (err, result) {
     console.log(result);
     if (err) {
+      res.status(400);
       res.send(err);
       return;
     } else if (result.affectedRows === 0) {
