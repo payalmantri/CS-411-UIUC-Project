@@ -340,6 +340,24 @@ app.get('/clubs', function (req, res) {
 
 });
 
+//get players of a clubç
+app.get('/club/:clubId/players', (req, res) => {
+  const clubId = req.params.clubId;
+
+  // Call stored procedure
+  connection.query('CALL get_club_player_points(?)', [clubId], (error, results) => {
+    if (error) {
+      console.error('Error calling stored procedure: ', error);
+      res.status(500).send('Internal server error');
+    } else {
+      console.log('Results: ', results);
+      res.status(200).json(results[0]);
+    }
+  });
+});
+
+
+
 app.listen(80, function () {
   console.log('Node app is running on port 80');
 });
