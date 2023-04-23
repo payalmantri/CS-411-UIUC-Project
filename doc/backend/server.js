@@ -298,7 +298,7 @@ app.get('/lifetimestats/:id', function (req, res) {
   sum(goals) + sum(assists) AS total_points
 FROM game_player_stats
 INNER JOIN player ON player.id = game_player_stats.player_id
-WHERE player.name = '${playerid}'
+WHERE player.id = '${playerid}'
 GROUP BY player_id
 ORDER BY total_points DESC`;
 
