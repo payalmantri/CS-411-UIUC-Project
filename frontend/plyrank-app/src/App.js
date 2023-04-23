@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/login';
 import Register from './pages/register';
 import MainLayoutRoutes from './MainLayoutRoutes';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
  

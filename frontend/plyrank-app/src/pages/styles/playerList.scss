@@ -1,64 +1,72 @@
 .playerSearch {
-
     // display: inline;
-
+  
     .search-container {
-        .search-form {
-
-        background-color:rgb(209, 207, 207);
+      .search-form {
+        background-color: rgb(209, 207, 207);
         display: flex;
         flex-direction: row;
         padding: 10px;
         flex-wrap: wrap;
-
+  
         .search-input {
-            display: flex;
-            width: 45%;
-
-            margin: 5px;
-            justify-content: center;
-
-            &.submit-button {
-                justify-content: right;
-            }
-
+          display: flex;
+          width: 45%;
+          margin: 5px;
+          justify-content: center;
+  
+          &.submit-button {
+            justify-content: right;
+          }
         }
+      }
     }
-}
+  
+    .playersTable {
+      font-family: Arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      margin-top: 10px;
+  
+      .playerName {
+        font-weight: bold;
+        // it is a clickable link . Add underline to show it is clickable
+        text-decoration: underline;
+        cursor: pointer;
+        
+        &:hover {
+          color: blue;
+        }
 
-.playersTable {
-    font-family: Arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    margin-top: 10px;
-}
-
-.playersTable th,
-.playersTable td {
-    text-align: left;
-    padding: 8px;
-    border: 1px solid #ddd;
-}
-
-.playersTable th {
-    background-color: black;
-    color: white;
-}
-
-.playersTable tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.playersTable tr:hover {
-    background-color: #ddd;
-}
-
-.playersTable img {
-    max-width: 50px;
-    max-height: 50px;
-    border-radius: 50%;
-}
-
-}
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ddd;
+      }
+  
+      th {
+        background-color: black;
+        color: white;
+      }
+  
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+  
+      tr:hover {
+        background-color: #ddd;
+      }
+  
+      
+      img {
+        max-width: 50px;
+        max-height: 50px;
+        border-radius: 50%;
+      }
+    }
+  }
+  

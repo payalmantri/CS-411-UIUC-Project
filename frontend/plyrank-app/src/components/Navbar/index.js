@@ -10,6 +10,12 @@ NavBtnLink,
 
 
 const Navbar = () => {
+	const userRole = localStorage.getItem('userRole');
+	const handleSignOut = () => {
+		localStorage.clear();
+		
+	  };
+	
 return (
 	<>
 	<Nav>
@@ -27,11 +33,16 @@ return (
 		<NavLink to='/TournamentList' >
 			Tournaments
 		</NavLink>
+		{userRole === 'admin' && (
+			<NavLink to='/Admin' >
+				Admin
+				</NavLink>	)}
 		{/* Second Nav */}
 		{/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
 		</NavMenu>
 		<NavBtn>
-		<NavBtnLink to='/'>Sign Out</NavBtnLink>
+		<NavBtnLink onClick={handleSignOut}
+		to='/'>Sign Out</NavBtnLink>
 		</NavBtn>
 	</Nav>
 	</>

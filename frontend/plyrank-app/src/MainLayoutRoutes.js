@@ -20,6 +20,7 @@ function MainLayoutRoutes() {
               
                 <Route path='/PlayerSearch' element={<PlayerList />} />
                 <Route path='/TournamentList' element={<TournamentList />} />
+                {/* <Route path="/Admin" element={<Admin />} /> */}
             </Routes>
         </div>
     )
