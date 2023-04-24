@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../constants';
- 
+import { Form, Button, Alert,  } from 'react-bootstrap';
+import './styles/register.scss';
+import {  toast } from 'react-toastify';
+
 const Register = () => {
  
   // States for registration
@@ -44,73 +47,64 @@ const Register = () => {
         body: JSON.stringify({ name: name, email: email, password: password, role: 'User'})
       };
       fetch(`${BASE_URL}/register`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(response.statusText);
+        }
+      })
       .then(data => {
               setSubmitted(true);
               setError(false);
               navigate('/');
       })
-      .catch(error=>{console.log(error)})
+      .catch(error=>{
+        console.log(error);
+        toast.error("Error in registering the user");
+        
+      })
+    
     }
   };
  
-  // Showing success message
-  const successMessage = () => {
-    return (
-      <div
-        className="success"
-        style={{
-          display: submitted ? '' : 'none',
-        }}>
-        <h1>User {name} successfully registered!!</h1>
-      </div>
-    );
-  };
- 
-  // Showing error message if error is true
-  const errorMessage = () => {
-    return (
-      <div
-        className="error"
-        style={{
-          display: error ? '' : 'none',
-        }}>
-        <h1>Please enter all the fields</h1>
-      </div>
-    );
-  };
- 
   return (
-    <div className="form">
-      <div>
+    <div className="register-container ">
+      <div className="register-header">
         <h1>User Registration</h1>
       </div>
  
-      {/* Calling to the methods */}
-      <div className="messages">
-        {errorMessage()}
-        {successMessage()}
+      <div className="register-messages">
+        {error && <Alert variant="danger">Please enter all the fields</Alert>}
+        {submitted && <Alert variant="success">User {name} successfully registered!!</Alert>}
       </div>
  
-      <form>
-        {/* Labels and inputs for form data */}
-        <label className="label">Name</label>
-        <input onChange={handleName} className="input"
-          value={name} type="text" />
+      <Form onSubmit={handleSubmit} className="register-form">
+    
+        <Form.Group className='form-group'>
+          <Form.Label>Name</Form.Label>
+          <Form.Control onChange={handleName} value={name} type="text" placeholder="Enter name" />
+        </Form.Group>
  
-        <label className="label">Email</label>
-        <input onChange={handleEmail} className="input"
-          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$"
-          value={email} type="email" />
+        <Form.Group  className='form-group'>
+          <Form.Label>Email address</Form.Label>
+          <Form.Control onChange={handleEmail} value={email} type="email" placeholder="Enter email" />
+        </Form.Group>
  
-        <label className="label">Password</label>
-        <input onChange={handlePassword} className="input"
-          value={password} type="password" />
+        <Form.Group  className='form-group'>
+          <Form.Label>Password</Form.Label>
+          <Form.Control onChange={handlePassword} value={password} type="password" placeholder="Password" />
+        </Form.Group>
  
-        <button onClick={handleSubmit} className="btn" type="submit">
+        <Button variant="primary" type="submit" className="register-button">
           Submit
-        </button>
-      </form>
+        </Button>
+
+        {/* cancel button */}
+        <Button variant="danger" type="cancel" className="cancel-button" onClick={() => navigate('/')}>
+          Cancel
+        </Button>
+      </Form>
     </div>
   );
 };

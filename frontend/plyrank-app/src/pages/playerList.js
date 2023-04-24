@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import './styles/playerList.scss'
 import { Dropdown } from 'bootstrap';
+import { toast } from 'react-toastify';
 
 const
 	PlayerList = () => {
@@ -41,12 +42,22 @@ const
 				},
 				body: JSON.stringify({ userId: localStorage.getItem('userId'), teamId: teamId, playerId: selectedPlayer.id }),
 			})
-				.then((res) => res.json())
+				.then((res) => {
+					if (res.status === 200) {
+						return res.json();
+					} else {
+						
+						throw new Error('Error adding player to team');
+					}
+				})
 				.then((data) => {
 					console.log(data);
 					handleModalClose();
 				})
-				.catch((error) => console.error(error));
+				.catch((error) => {
+					console.error(error);
+					toast.error('Error adding player to team');
+				})
 
 		}
 
