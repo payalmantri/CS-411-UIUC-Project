@@ -358,6 +358,20 @@ app.get('/club/:clubId/players', (req, res) => {
 });
 
 
+// define the endpoint to fetch all user details
+app.get('/users', (req, res) => {
+  const query = 'SELECT id, name, email, role, funds_available FROM user';
+  connection.query(query, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error fetching users');
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
 
 app.listen(80, function () {
   console.log('Node app is running on port 80');
