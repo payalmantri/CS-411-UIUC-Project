@@ -170,3 +170,111 @@ limit 15;
 
 -- Add index on club name 
 create index club_name_index on club(name);
+
+-- STAGE 5
+
+
+--  Stored Procedure to fetch top 15 players based on goals and assists for a tournament
+DELIMITER $$
+CREATE PROCEDURE tournament_top_15 (IN tournament_id VARCHAR(255))
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE player_id INT;
+    DECLARE player_name VARCHAR(255);
+    DECLARE goals INT;
+    DECLARE assists INT;
+    DECLARE yellow_cards INT;
+    DECLARE red_cards INT;
+    DECLARE total_points INT;
+    DECLARE club_name VARCHAR(255);
+
+    DECLARE player_stats_cur CURSOR FOR
+        SELECT gps.player_id,
+               p.name,
+               SUM(gps.goals) AS goals,
+               SUM(gps.assists) AS assists,
+               SUM(gps.yellow_cards) AS yellow_cards,
+               SUM(gps.red_cards) AS red_cards,
+               SUM(gps.goals) + SUM(gps.assists) AS total_points
+        FROM game_player_stats gps
+                 INNER JOIN player p ON gps.player_id = p.id
+        WHERE gps.game_id IN (
+            SELECT g.id
+            FROM Games g
+            WHERE g.tournament_id = (SELECT id FROM tournament t WHERE t.id = tournament_id)
+        )
+        GROUP BY gps.player_id
+        ORDER BY total_points desc ;
+    DECLARE CONTINUE handler
+        FOR NOT found
+        SET done = 1;
+
+    DROP TEMPORARY TABLE IF EXISTS temp_player_stats;
+    CREATE TEMPORARY TABLE temp_player_stats (
+                                                 player_id INT,
+                                                 player_name VARCHAR(255),
+                                                 club_name VARCHAR(255),
+                                                 goals INT,
+                                                 assists INT,
+                                                 yellow_cards INT,
+                                                 red_cards INT,
+                                                 total_points INT
+    );
+
+    CREATE  INDEX ix_tmp_total_points ON temp_player_stats (total_points);
+
+    OPEN player_stats_cur;
+
+    read_loop: LOOP
+        FETCH player_stats_cur INTO player_id, player_name, goals, assists, yellow_cards, red_cards, total_points;
+        IF done = 1 THEN
+            LEAVE read_loop;
+        end IF;
+
+        SELECT club.name INTO club_name
+        FROM player
+                 INNER JOIN club ON player.club_id = club.id
+        WHERE player.id = player_id;
+
+        INSERT INTO temp_player_stats (player_id, player_name, club_name, goals, assists, yellow_cards, red_cards, total_points)
+        VALUES (player_id, player_name, club_name, goals, assists, yellow_cards, red_cards, total_points);
+    END LOOP;
+
+    CLOSE player_stats_cur;
+
+    SELECT *
+    FROM temp_player_stats
+    ORDER BY temp_player_stats.total_points DESC
+    limit 15;
+
+    DROP TEMPORARY TABLE IF EXISTS temp_player_stats;
+END$$
+DELIMITER ;
+
+
+-- Call the stored procedure
+-- CALL tournament_top_15('BE1');
+
+
+
+
+-- Stored Procedure to fetch lifetime stats of a player
+
+
+
+
+
+
+-- Trigger to check if team has more than 11 players
+CREATE TRIGGER before_insert_player_team
+BEFORE INSERT ON player_team
+FOR EACH ROW
+BEGIN
+  DECLARE team_count INT;
+  SET team_count = (SELECT COUNT(*) FROM player_team WHERE team_id = NEW.team_id);
+
+  IF team_count >= 11 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot add player to team. Team already has 11 players.';
+  END IF;
+END;
+

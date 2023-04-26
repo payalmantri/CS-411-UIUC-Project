@@ -120,26 +120,11 @@ app.get('/players', async (req, res) => {
 /* Get top 15 players in a tournament */
 app.get('/tournamentTop15/:tournamentId', function (req, res) {
   var tournamentId = req.params.tournamentId;
-
-  var sql = `SELECT player_id,
-		       name,
-		       sum(goals) AS goals,
-		       sum(assists) AS assists,
-		       sum(yellow_cards) AS yellow_cards,
-		       sum(red_cards) AS red_cards,
-		       sum(goals) + sum(assists) AS total_points
-		FROM game_player_stats
-		INNER JOIN player ON player.id = game_player_stats.player_id
-		WHERE game_id in
-		    (SELECT id
-		     FROM Games
-		     WHERE tournament_id = (SELECT id FROM tournament T WHERE T.id = '${tournamentId}'))
-		GROUP BY player_id
-		ORDER BY total_points DESC
-		LIMIT 15`;
+  var sql =`CALL tournament_top_15(${tournamentId})`;
   console.log(sql);
   connection.query(sql, function (err, result) {
     if (err) {
+      res.status(500).json({ message: 'Error fetching players.' });
       res.send(err)
       return;
     }
