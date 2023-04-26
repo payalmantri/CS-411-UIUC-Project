@@ -128,7 +128,7 @@ app.get('/tournamentTop15/:tournamentId', function (req, res) {
 	res.send(err); 
       return;
     }
-    res.json(result[0])
+    res.json(result)
   });
 });
 
@@ -276,13 +276,25 @@ app.post('/teams', function (req, res) {
 //  fetch lifetime stats for a player 
 app.get('/lifetimestats/:id', function (req, res) {
   var playerid = req.params.id;
-  var sql = `call player_career_stats('${playerid}')`
+  var sql = `SELECT player_id,
+  name,
+  sum(goals) AS goals,
+  sum(assists) AS assists,
+  sum(yellow_cards) AS yellow_cards,
+  sum(red_cards) AS red_cards,
+  sum(goals) + sum(assists) AS total_points
+FROM game_player_stats
+INNER JOIN player ON player.id = game_player_stats.player_id
+WHERE player.id = '${playerid}'
+GROUP BY player_id
+ORDER BY total_points DESC`;
+
   connection.query(sql, function (err, result) {
     if (err) {
       res.status(500).send(err)
       return;
     }
-    res.json(result[0]);
+    res.json(result)
   });
 });
 
