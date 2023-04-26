@@ -223,7 +223,8 @@ app.post('/register', function (req, res) {
     connection.query(sql, function (err, result) {
       if (err) {
         if (err.code == 'ER_DUP_ENTRY') {
-          res.send({ 'message': 'This email address has already been used!' })
+		res.status(400);         
+		res.send({ 'message': 'This email address has already been used!' })
         }
         else {
           res.send(err)
@@ -327,7 +328,7 @@ app.get('/clubs', function (req, res) {
 });
 
 //get players of a clubç
-app.get('/club/:clubId/players', (req, res) => {
+app.get('/clubs/:clubId/players', (req, res) => {
   const clubId = req.params.clubId;
 
   // Call stored procedure
