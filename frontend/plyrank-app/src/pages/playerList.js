@@ -114,10 +114,11 @@ const
 				.then((res) => res.json())
 				.then((data) => {
 					
-					if(data.length > 0) {
+					if(data.length > 0 && (data[0].yellow_cards || data[0].red_cards || data[0].goals || data[0].assists)) {
+
 						player.lifetimeStats =  data[0];
 					}
-					console.log(player);
+				
 					setData([...playerList]);
 				})
 				.catch((error) => {
