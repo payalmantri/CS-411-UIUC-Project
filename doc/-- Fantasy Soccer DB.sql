@@ -262,6 +262,98 @@ DELIMITER ;
 
 
 
+DELIMITER //
+CREATE PROCEDURE player_career_stats(IN playerid INT)
+BEGIN
+    DECLARE player_id INT;
+    DECLARE name VARCHAR(255);
+    DECLARE goals INT;
+    DECLARE assists INT;
+    DECLARE yellow_cards int;
+	DECLARE red_cards int;
+    DECLARE total_points INT;
+    DECLARE done int default 0;
+    
+	DECLARE playerCur CURSOR FOR
+		SELECT player.id, player.name
+        FROM player
+		WHERE player.id = playerid;
+        
+	DECLARE CONTINUE handler
+		FOR NOT found
+        SET done = 1;
+        
+	DROP TABLE IF EXISTS player_career_stats;
+        
+	CREATE TABLE player_career_stats (
+		player_id int not null,
+		name varchar(255) not null,
+		goals int,
+		assists int,
+		yellow_cards int,
+		red_cards int,
+		total_points int
+	);
+        
+	OPEN playerCur;
+    PLAYER_LOOP:
+	LOOP
+		FETCH playerCur INTO player_id, name;
+        
+        IF done = 1 THEN
+			LEAVE PLAYER_LOOP;
+		end IF;
+        
+        SET goals = 0;
+        SET assists = 0;
+        SET yellow_cards = 0;
+		SET red_cards = 0;
+        SET total_points = 0;
+
+        SELECT Sum(game_player_stats.goals)
+        INTO   goals
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+        
+        SELECT Sum(game_player_stats.assists)
+        INTO   assists
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+
+        SELECT Sum(game_player_stats.yellow_cards)
+        INTO   yellow_cards 
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+        
+        SELECT Sum(game_player_stats.red_cards)
+        INTO   red_cards 
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+        
+        SET total_points = goals + assists;
+        
+        INSERT INTO player_career_stats
+        (player_id,
+         name,
+         goals,
+         assists,
+         yellow_cards,
+         red_cards,
+         total_points)
+        VALUES      (player_id,
+					 name,
+					 goals,
+					 assists,
+					 yellow_cards,
+					 red_cards,
+					 total_points);
+    end LOOP;
+    CLOSE playerCur;
+    SELECT * FROM player_career_stats;
+END //
+DELIMITER ;
+
+
 
 
 
@@ -277,4 +369,85 @@ BEGIN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot add player to team. Team already has 11 players.';
   END IF;
 END;
+
+
+
+-- Stored proceure to get club players 
+
+CREATE PROCEDURE get_club_player_points (IN club_id INT)
+begin
+    DECLARE player_id INT;
+    DECLARE player_name VARCHAR(255);
+    DECLARE player_goals INT;
+    DECLARE player_assists INT;
+    DECLARE player_points INT;
+    declare done int default 0;
+
+    DECLARE player_cursor CURSOR FOR
+        SELECT player.id,
+               player.name
+        FROM   player
+        WHERE  player.club_id = club_id
+        LIMIT 10;
+
+    DECLARE CONTINUE handler
+        FOR NOT found
+        SET done = 1;
+
+    DROP temporary TABLE IF EXISTS temp_player_points;
+
+    CREATE temporary TABLE temp_player_points
+    (
+        player_id      INT,
+        player_name    VARCHAR(255),
+        player_goals   INT,
+        player_assists INT,
+        player_points  INT
+    );
+
+    open player_cursor;
+
+    PLAYER_LOOP:
+    LOOP
+        FETCH player_cursor INTO player_id, player_name;
+
+        IF done = 1 THEN
+            LEAVE PLAYER_LOOP;
+        end IF;
+
+        SET player_goals = 0;
+        SET player_assists = 0;
+        SET player_points = 0;
+
+
+
+        SELECT Sum(goals)
+        INTO   player_goals
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+
+        SELECT Sum(assists)
+        INTO   player_assists
+        FROM   game_player_stats
+        WHERE  game_player_stats.player_id = player_id;
+        SET player_points = player_goals + player_assists;
+        INSERT INTO temp_player_points
+        (player_id,
+         player_name,
+         player_goals,
+         player_assists,
+         player_points)
+        VALUES      (player_id,
+                     player_name,
+                     player_goals,
+                     player_assists,
+                     player_points);
+    end LOOP;
+    CLOSE player_cursor;
+    SELECT * FROM temp_player_points;
+
+
+END
+
+
 
