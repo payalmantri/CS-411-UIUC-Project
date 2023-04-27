@@ -21,6 +21,7 @@ function TournamentTopPlayers({ tournamentID }) {
         <thead>
           <tr>
             <th>Player Name</th>
+            <th>Club Name</th>
             <th>Goals</th>
             <th>Assists</th>
             <th>Yellow Cards</th>
@@ -31,7 +32,8 @@ function TournamentTopPlayers({ tournamentID }) {
         <tbody>
           {topPlayers.map((player) => (
             <tr key={player.id}>
-              <td>{player.name}</td>
+              <td>{player.player_name}</td>
+              <td>{player.club_name}</td>
               <td>{player.goals}</td>
               <td>{player.assists}</td>
               <td>{player.yellow_cards}</td>

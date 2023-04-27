@@ -1,0 +1,18 @@
+.register-container {
+    width: 80%;
+    margin: 50px auto;
+
+    .register-form {
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .register-button {
+            margin-top: 20px;
+        }
+        .cancel-button {
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+    }
+}

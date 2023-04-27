@@ -3,6 +3,8 @@ import { BASE_URL } from '../constants';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import './styles/playerList.scss'
+import { Dropdown } from 'bootstrap';
+import { toast } from 'react-toastify';
 
 const
 	PlayerList = () => {
@@ -13,7 +15,7 @@ const
 		const [selectedTeam, setSelectedTeam] = React.useState('');
 
 
-		function handleAddPlayerToTeam(player) {
+		function openAddPlayerModal(player) {
 			setSelectedPlayer(player);
 			setShowModal(true);
 		}
@@ -22,21 +24,40 @@ const
 			setShowModal(false);
 		}
 
-		function handleTeamSelect(event) {
+		function handleTeamChange(event) {
+			console.log(event.target.value);
 			setSelectedTeam(event.target.value);
+		}
+
+		function handleTeamSelect() {
+			// get the team id from the value of the select
+			// and then call the API to add the player to the team
+			// and then close the modal
+			const teamId = selectedTeam;
+			console.log(teamId);
 			fetch(`${BASE_URL}/teams/players`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ userId: localStorage.getItem('userId'), teamId: event.target.value, playerId: selectedPlayer.id }),
+				body: JSON.stringify({ userId: localStorage.getItem('userId'), teamId: teamId, playerId: selectedPlayer.id }),
 			})
-				.then((res) => res.json())
+				.then((res) => {
+					if (res.status === 200) {
+						return res.json();
+					} else {
+						
+						throw new Error('Error adding player to team');
+					}
+				})
 				.then((data) => {
 					console.log(data);
 					handleModalClose();
 				})
-				.catch((error) => console.error(error));
+				.catch((error) => {
+					console.error(error);
+					toast.error('Error adding player to team');
+				})
 
 		}
 
@@ -93,10 +114,11 @@ const
 				.then((res) => res.json())
 				.then((data) => {
 					
-					if(data.length > 0) {
+					if(data.length > 0 && (data[0].yellow_cards || data[0].red_cards || data[0].goals || data[0].assists)) {
+
 						player.lifetimeStats =  data[0];
 					}
-					console.log(player);
+				
 					setData([...playerList]);
 				})
 				.catch((error) => {
@@ -163,7 +185,7 @@ const
 				</div>
 
 				<div>
-					{playerList && (
+					{playerList && playerList.length > 0 && (
 						<table className="playersTable">
 							<thead>
 								<tr>
@@ -184,14 +206,14 @@ const
 											<img src={player.imageUrl} alt={`Image of ${player.playername}`} />
 										</td>
 										{/* Make name as link clicking on which should call the method showPlayerDetails */}
-										<td onClick={() => showPlayerDetails(player)}>{player.playername}</td>
+										<td onClick={() => showPlayerDetails(player)} className='playerName'>{player.playername}</td>
 
 										<td>{player.position}</td>
 										<td>{player.clubname}</td>
 										<td>{player.currentMarketValue}</td>
 										<td>{player.subposition}</td>
 										<td>
-											<button onClick={() => handleAddPlayerToTeam(player)}>Add to Team</button>
+											<button onClick={() => openAddPlayerModal(player)}>Add to Team</button>
 										</td>
 									</tr>
 									<>
@@ -222,6 +244,10 @@ const
 							</tbody>
 						</table>
 					)}
+
+					{playerList && playerList.length === 0 && (
+						<p className='no-players'>No players found</p>
+					)}
 					{ selectedPlayer && (
 						<Modal
 							show={showModal}
@@ -235,7 +261,9 @@ const
 							<Modal.Body>
 								<p>Are you sure you want to add {selectedPlayer.playername} to your team?</p>
 								<label htmlFor="team-select">Select a team:</label>
-								<select id="team-select" value={selectedTeam} onChange={handleTeamSelect}>
+								
+
+								<select id="team-select" value={selectedTeam} onChange={handleTeamChange}>
 									<option value="">-- Select a team --</option>
 									{teamNames.map((team) => (
 										<option key={team.teamId} value={team.teamId}>
@@ -248,8 +276,7 @@ const
 								<Button variant="secondary" onClick={handleModalClose}>
 									Cancel
 								</Button>
-								<Button variant="primary" onClick={handleAddPlayerToTeam}>
-									Add Player
+								<Button variant="primary" onClick={handleTeamSelect}>									Add Player
 								</Button>
 							</Modal.Footer>
 						</Modal>
