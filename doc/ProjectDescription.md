@@ -90,4 +90,8 @@ The Admin portal is displayed when the user logs in as an admin. The admin can a
 | Youhan Li | Setting up the backend user database and connecting the backend with the frontend. Work on setting up authorization |
 
 
+ ## Final Demo Video
+ https://youtu.be/R3xZHhZiULM
+
 </br>
+

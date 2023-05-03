@@ -3,7 +3,6 @@ import { BASE_URL } from '../constants';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import './styles/playerList.scss'
-import { Dropdown } from 'bootstrap';
 import { toast } from 'react-toastify';
 
 const
@@ -51,6 +50,7 @@ const
 					}
 				})
 				.then((data) => {
+					toast.success('Player added to team');
 					console.log(data);
 					handleModalClose();
 				})
