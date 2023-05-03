@@ -1,0 +1,52 @@
+.image-container {
+    position: relative;
+    width: 900px;
+    height: 600px;
+    border: 2px solid white;
+    .img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 900px 100%;
+    }
+    // use image from images folder
+    .background-img {
+      background-image:  url('../../images/pti_out_of_domain.png');
+    }
+    .foreground-img {
+      background-image:  url('../../images/makeitso_out_of_domain.png');
+      width: 50%;
+    }
+
+    @mixin center() {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .slider {
+          position: absolute;
+          -webkit-appearance: none;
+          appearance: none;
+          width: 100%;
+          height: 100%;
+          background: rgba(#f2f2f2, .3);
+          outline: none;
+          margin: 0;
+          transition: all .2s;
+          @include center;
+          &:hover {
+            background: rgba(#f2f2f2, .1);
+          }
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 6px;
+            height: 600px;
+            background: white;
+            cursor: pointer;
+        }
+      }
+  }
