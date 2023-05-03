@@ -61,9 +61,9 @@ app.post('/login', function (req, res) {
       return;
     }
     if (result.length == 1) {
-      res.json({ isAuthenticated: true, userId: result[0].id, userRole: result[0].role})
+      res.json({ isAuthenticated: true, userId: result[0].id, userRole: result[0].role })
     } else {
-      res.json({ isAuthenticated: false, userId: null, userRole: null})
+      res.json({ isAuthenticated: false, userId: null, userRole: null })
     }
     console.log(res);
   });
@@ -120,12 +120,12 @@ app.get('/players', async (req, res) => {
 /* Get top 15 players in a tournament */
 app.get('/tournamentTop15/:tournamentId', function (req, res) {
   var tournamentId = req.params.tournamentId;
-  var sql =`CALL tournament_top_15('${tournamentId}')`;
+  var sql = `CALL tournament_top_15('${tournamentId}')`;
   console.log(sql);
   connection.query(sql, function (err, result) {
     if (err) {
       res.status(500);
-	res.send(err); 
+      res.send(err);
       return;
     }
     res.json(result[0])
@@ -160,7 +160,7 @@ app.post('/teams/players', function (req, res) {
   var date = format(new Date());
   var sql = `insert into player_team(player_id, team_id, user_id, date_added) values (${playerid},${teamid},${userid},'${date}')`;
   console.log(sql);
-   connection.query(sql, function (err, result) {
+  connection.query(sql, function (err, result) {
     console.log(result);
     if (err) {
       res.status(400);
@@ -223,8 +223,8 @@ app.post('/register', function (req, res) {
     connection.query(sql, function (err, result) {
       if (err) {
         if (err.code == 'ER_DUP_ENTRY') {
-		res.status(400);         
-		res.send({ 'message': 'This email address has already been used!' })
+          res.status(400);
+          res.send({ 'message': 'This email address has already been used!' })
         }
         else {
           res.send(err)
