@@ -21,7 +21,7 @@
 | ----------- | ---------------------- |
 |  Title      |      PlyRank - Fantasy Soccer     |
 | System URL  |      link_to_system    |
-| Video Link  |      link_to_video     |
+| Video Link  |      https://youtu.be/R3xZHhZiULM     |
 
 ## Project Summary
 
