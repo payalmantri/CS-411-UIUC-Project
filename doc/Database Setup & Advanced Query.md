@@ -207,6 +207,79 @@ GROUP BY player_id
 ORDER BY total_points DESC
 LIMIT 15;
 ```
+
+Procedure for the above query
+
+```
+DELIMITER //
+
+CREATE PROCEDURE tournament_top_15(IN tournamentId VARCHAR(255))
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE p_id INT;
+    DECLARE p_name VARCHAR(255);
+    DECLARE p_goals INT;
+    DECLARE p_assists INT;
+    DECLARE p_yellow_cards INT;
+    DECLARE p_red_cards INT;
+    DECLARE p_total_points INT;
+    DECLARE cur CURSOR FOR
+        SELECT player_id,
+               name,
+               sum(goals) AS goals,
+               sum(assists) AS assists,
+               sum(yellow_cards) AS yellow_cards,
+               sum(red_cards) AS red_cards,
+               sum(goals) + sum(assists) AS total_points
+        FROM game_player_stats
+                 INNER JOIN player ON player.id = game_player_stats.player_id
+        WHERE game_id IN
+              (SELECT id
+               FROM Games
+               WHERE tournament_id = (SELECT id FROM tournament WHERE id = tournamentId))
+        GROUP BY player_id
+        ORDER BY total_points DESC
+        LIMIT 15;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Create a temporary table
+    DROP TEMPORARY TABLE IF EXISTS TempTournamentStats;
+    CREATE TEMPORARY TABLE TempTournamentStats (
+                                                   player_id INT,
+                                                   player_name VARCHAR(255),
+                                                   goals INT,
+                                                   assists INT,
+                                                   yellow_cards INT,
+                                                   red_cards INT,
+                                                   total_points INT
+    );
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO p_id, p_name, p_goals, p_assists, p_yellow_cards, p_red_cards, p_total_points;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- Insert into temporary table
+        INSERT INTO TempTournamentStats (player_id, player_name, goals, assists, yellow_cards, red_cards, total_points)
+        VALUES (p_id, p_name, p_goals, p_assists, p_yellow_cards, p_red_cards, p_total_points);
+    END LOOP;
+
+    CLOSE cur;
+
+    -- Select from the temporary table
+    SELECT * FROM TempTournamentStats;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempTournamentStats;
+END;
+
+DELIMITER ;
+
+```
+
+
 -- Fetch lifetime stats of a player
 ```
 SELECT player_id,
@@ -222,6 +295,53 @@ WHERE player.name = 'Lionel Messi'
 GROUP BY player_id
 ORDER BY total_points DESC;
 ```
+Procedure for the above query 
+```
+DELIMITER //
+
+CREATE PROCEDURE player_career_stats(IN playerid INT)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE p_id INT;
+    DECLARE p_name VARCHAR(255);
+    DECLARE p_goals INT;
+    DECLARE p_assists INT;
+    DECLARE p_yellow_cards INT;
+    DECLARE p_red_cards INT;
+    DECLARE p_total_points INT;
+    DECLARE cur CURSOR FOR
+        SELECT player_id,
+               name,
+               sum(goals) AS goals,
+               sum(assists) AS assists,
+               sum(yellow_cards) AS yellow_cards,
+               sum(red_cards) AS red_cards,
+               sum(goals) + sum(assists) AS total_points
+        FROM game_player_stats
+                 INNER JOIN player ON player.id = game_player_stats.player_id
+        WHERE player_id = playerid
+        GROUP BY player_id
+        ORDER BY total_points DESC;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO p_id, p_name, p_goals, p_assists, p_yellow_cards, p_red_cards, p_total_points;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- Output the fetched row here. How you do this depends on your SQL environment.
+        SELECT p_id, p_name, p_goals, p_assists, p_yellow_cards, p_red_cards, p_total_points;
+    END LOOP;
+
+    CLOSE cur;
+END;
+
+DELIMITER ;
+```
+
+
 -- Fetch top 15 players based on goals and assists for a club
 ```
 Select player_id, player.name,club.name, sum(goals) as goals, sum(assists) as assists
@@ -234,3 +354,67 @@ order by goals desc, assists desc
 limit 15;
 ```
 
+
+Procedure for this query
+
+```
+DELIMITER //
+
+CREATE PROCEDURE get_club_player_points(IN clubId INT)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE p_id INT;
+    DECLARE p_name VARCHAR(255);
+    DECLARE c_name VARCHAR(255);
+    DECLARE p_goals INT;
+    DECLARE p_assists INT;
+    DECLARE cur CURSOR FOR
+        SELECT player.id,
+               player.name,
+               club.name,
+               sum(goals) as goals,
+               sum(assists) as assists
+        FROM game_player_stats
+                 INNER JOIN player ON player.id = game_player_stats.player_id
+                 INNER JOIN club ON club.id = player.club_id
+        WHERE club.id = clubId
+        GROUP BY player_id
+        ORDER BY goals DESC, assists DESC
+        LIMIT 15;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Create a temporary table
+    DROP TEMPORARY TABLE IF EXISTS TempClubPlayerStats;
+    CREATE TEMPORARY TABLE TempClubPlayerStats (
+                                                   player_id INT,
+                                                   player_name VARCHAR(255),
+                                                   club_name VARCHAR(255),
+                                                   goals INT,
+                                                   assists INT
+    );
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO p_id, p_name, c_name, p_goals, p_assists;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        -- Insert into temporary table
+        INSERT INTO TempClubPlayerStats (player_id, player_name, club_name, goals, assists)
+        VALUES (p_id, p_name, c_name, p_goals, p_assists);
+    END LOOP;
+
+    CLOSE cur;
+
+    -- Select from the temporary table
+    SELECT * FROM TempClubPlayerStats;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempClubPlayerStats;
+
+
+END
+```
+
+---------
